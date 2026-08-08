@@ -73,11 +73,12 @@
   .price-row .label{ font-size:12.5px; color:var(--slate); }
 
   .cta-btn{
-    width:100%; margin-top:16px; padding:15px; border:none; border-radius:12px; cursor:pointer;
+    display:block; width:100%; margin-top:16px; padding:15px 0; border:none; border-radius:12px; cursor:pointer;
     background:linear-gradient(135deg,var(--stamp),var(--stamp2)); color:white;
     font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;
+    text-align:center; text-decoration:none; box-sizing:border-box;
   }
-  .cta-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .cta-btn.disabled{ opacity:0.4; pointer-events:none; }
 
   .instructions{
     display:none; margin-top:16px; padding:16px; border-radius:12px;
@@ -126,8 +127,9 @@
       <div style="font-size:26px;">🔒</div>
     </div>
 
-    <button class="cta-btn" id="waBtn" disabled>Step 1 — Send Order on WhatsApp</button>
-    <button class="cta-btn" id="payBtn" style="display:none; margin-top:10px; background:linear-gradient(135deg,#22C55E,#16A34A);">Step 2 — Pay ₹399 Now</button>
+    <!-- Real anchor tags — mobile browsers never block genuine link taps, unlike window.open() -->
+    <a class="cta-btn disabled" id="waBtn" href="#" target="_blank" rel="noopener">Step 1 — Send Order on WhatsApp</a>
+    <a class="cta-btn" id="payBtn" href="#" target="_blank" rel="noopener" style="display:none; margin-top:10px; background:linear-gradient(135deg,#22C55E,#16A34A);">Step 2 — Pay ₹399 Now</a>
 
     <div class="instructions" id="instructions">
       <strong>Almost done — 2 quick steps:</strong>
@@ -171,7 +173,7 @@
       tab.classList.add('active');
       activeCat = tab.dataset.cat;
       selectedTpl = null;
-      waBtn.disabled = true;
+      updateWaLink();
       renderTemplates();
     });
   });
@@ -189,7 +191,7 @@
         document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected'));
         card.classList.add('selected');
         selectedTpl = t;
-        checkReady();
+        updateWaLink();
       });
       tplGrid.appendChild(card);
     });
@@ -199,30 +201,37 @@
   const fMessage = document.getElementById('fMessage');
   const waBtn = document.getElementById('waBtn');
   const payBtn = document.getElementById('payBtn');
-  function checkReady(){
-    waBtn.disabled = !(selectedTpl && fName.value.trim());
-  }
-  fName.addEventListener('input', checkReady);
-  renderTemplates();
 
-  waBtn.addEventListener('click', ()=>{
+  // Keeps the WhatsApp link's href always up to date with the current form state,
+  // so when the user taps it, it's a genuine pre-set link tap — never blocked on mobile.
+  function updateWaLink(){
     const name = fName.value.trim();
+    const ready = selectedTpl && name;
+    if(!ready){
+      waBtn.classList.add('disabled');
+      waBtn.href = '#';
+      return;
+    }
+    waBtn.classList.remove('disabled');
     const message = fMessage.value.trim();
-
     const orderText = encodeURIComponent(
       `New order 💌\nTemplate: ${selectedTpl.label}\nName: ${name}\nMessage: ${message || '(none provided)'}\n\nPayment: ₹399 (I'll complete this now)`
     );
-    // Separate button tap = its own browser gesture, mobile allows this reliably
-    window.open(`https://wa.me/${OWNER_WHATSAPP}?text=${orderText}`, '_blank');
+    waBtn.href = `https://wa.me/${OWNER_WHATSAPP}?text=${orderText}`;
+  }
+  fName.addEventListener('input', updateWaLink);
+  fMessage.addEventListener('input', updateWaLink);
+  renderTemplates();
 
+  payBtn.href = PAYMENT_LINK_URL;
+
+  waBtn.addEventListener('click', ()=>{
     document.getElementById('instructions').classList.add('show');
     waBtn.style.display = 'none';
     payBtn.style.display = 'block';
   });
 
   payBtn.addEventListener('click', ()=>{
-    // Separate user tap = separate browser gesture, so mobile never blocks this
-    window.open(PAYMENT_LINK_URL, '_blank');
     payBtn.textContent = 'Payment page opened ✓';
   });
 </script>
