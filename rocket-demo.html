@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Sequence 🚀</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh; background:linear-gradient(180deg,#0B1026,#1B2247 60%,#2E1A47);
+    font-family:'Poppins',sans-serif; color:white;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; padding:20px;
+  }
+  .star2{ position:absolute; background:white; border-radius:50%; animation:tw2 2.4s ease infinite; }
+  @keyframes tw2{ 50%{ opacity:0.2; } }
+
+  h1{ font-family:'Baloo 2',sans-serif; font-size:clamp(18px,5vw,22px); color:#A5B4FC; text-align:center; margin-bottom:6px; z-index:2; }
+  .sub{ color:#94A3B8; font-size:12.5px; margin-bottom:26px; text-align:center; z-index:2; }
+
+  .pad{ position:relative; z-index:2; width:100%; max-width:280px; text-align:center; }
+  .rocket{ font-size:56px; display:inline-block; transition:transform 1.4s cubic-bezier(.5,0,.7,1), opacity 1.4s ease; }
+  .rocket.launched{ transform:translateY(-700px) scale(0.6); opacity:0; }
+
+  .count{ font-family:'Baloo 2',sans-serif; font-size:44px; color:#FBBF24; margin:14px 0; min-height:56px; }
+
+  button{
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14.5px;
+    padding:13px 28px; border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#FBBF24,#F97316); color:#1B2247;
+    box-shadow:0 8px 20px rgba(251,191,36,0.35); transition:transform .15s ease;
+  }
+  button:hover{ transform:scale(1.06); }
+  button:disabled{ opacity:0.3; cursor:not-allowed; }
+
+  .mission-card{
+    display:none; z-index:2; margin-top:24px; background:rgba(255,255,255,0.06);
+    border:1px solid rgba(165,180,252,0.3); border-radius:16px; padding:22px; max-width:320px;
+    backdrop-filter:blur(6px);
+  }
+  .mission-card.show{ display:block; animation:mIn .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes mIn{ from{opacity:0; transform:translateY(14px) scale(0.95);} to{opacity:1; transform:translateY(0) scale(1);} }
+  .mission-card .badge2{ font-family:'Baloo 2',sans-serif; font-size:12px; color:#FBBF24; letter-spacing:1.5px; margin-bottom:8px; }
+  .mission-card p{ font-size:14px; color:#E2E8F0; line-height:1.6; }
+
+  .trail{ position:fixed; font-size:14px; pointer-events:none; z-index:5; animation:trailFade 1s ease-out forwards; }
+  @keyframes trailFade{ to{ opacity:0; transform:translateY(40px) scale(0.6); } }
+</style>
+</head>
+<body>
+
+<h1 id="title">Mission: Operation Cheer Up Bro</h1>
+<p class="sub">countdown se message tak, chalo dekhte hain</p>
+
+<div class="pad">
+  <div class="rocket" id="rocket">🚀</div>
+  <div class="count" id="count">READY</div>
+  <button id="launchBtn">Start Countdown</button>
+</div>
+
+<div class="mission-card" id="missionCard">
+  <div class="badge2">MISSION COMPLETE</div>
+  <p id="missionMsg"></p>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name');
+  const message = params.get('message') || "Just launching this to remind you — you've got a whole person in your corner, always. 🚀";
+  if(name) document.getElementById('title').textContent = `Mission: Cheer Up ${name}`;
+  document.getElementById('missionMsg').textContent = message;
+
+  for(let i=0;i<50;i++){
+    const s = document.createElement('div');
+    s.className = 'star2';
+    const size = 1+Math.random()*2;
+    s.style.width = size+'px'; s.style.height = size+'px';
+    s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*2)+'s';
+    document.body.appendChild(s);
+  }
+
+  const btn = document.getElementById('launchBtn');
+  const countEl = document.getElementById('count');
+  const rocket = document.getElementById('rocket');
+
+  btn.addEventListener('click', ()=>{
+    btn.disabled = true;
+    let n = 3;
+    countEl.textContent = n;
+    const timer = setInterval(()=>{
+      n--;
+      if(n > 0){
+        countEl.textContent = n;
+      } else {
+        clearInterval(timer);
+        countEl.textContent = 'LIFTOFF 🔥';
+        rocket.classList.add('launched');
+        spawnTrail();
+        setTimeout(()=>{
+          document.getElementById('missionCard').classList.add('show');
+        }, 900);
+      }
+    }, 700);
+  });
+
+  function spawnTrail(){
+    let count = 0;
+    const trailTimer = setInterval(()=>{
+      const t = document.createElement('div');
+      t.className = 'trail';
+      t.textContent = ['💨','✨','⭐'][Math.floor(Math.random()*3)];
+      const rect = rocket.getBoundingClientRect();
+      t.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*20) + 'px';
+      t.style.top = rect.top + 'px';
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(), 1000);
+      count++;
+      if(count > 14) clearInterval(trailTimer);
+    }, 90);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Love Pages Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12151C; --panel:#1B2028; --panel2:#20262F;
+    --line:#2C3340; --text:#EDEFF3; --muted:#8B93A3;
+    --accent:#E8598C; --accent2:#7C3AED; --good:#34D399;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:var(--bg); color:var(--text);
+    font-family:'Inter',sans-serif;
+  }
+  h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* ---- Gate screen ---- */
+  #gate{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:16px; padding:20px; text-align:center;
+  }
+  #gate h1{ font-size:22px; }
+  #gate p{ color:var(--muted); font-size:13.5px; max-width:320px; }
+  #gate input{
+    padding:12px 16px; border-radius:10px; border:1.5px solid var(--line);
+    background:var(--panel); color:var(--text); font-size:15px; width:240px; text-align:center;
+  }
+  #gate button{
+    padding:12px 24px; border-radius:10px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;
+  }
+  #gate .err{ color:#F87171; font-size:13px; min-height:18px; }
+
+  /* ---- Dashboard ---- */
+  #dashboard{ display:none; max-width:920px; margin:0 auto; padding:32px 20px 80px; }
+  .top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+  .top h1{ font-size:20px; }
+  .top span{ color:var(--muted); font-size:12.5px; }
+  .logout{ background:none; border:1px solid var(--line); color:var(--muted); padding:7px 14px; border-radius:8px; font-size:12.5px; cursor:pointer; font-family:'Inter',sans-serif; }
+
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:22px;
+  }
+  .stat-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px;
+  }
+  .stat-card .val{ font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; }
+  .stat-card .lbl{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .stat-card.revenue .val{ color:var(--good); }
+  .stat-card.pending .val{ color:#FBBF24; }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px; margin-bottom:22px;
+  }
+  .panel h2{ font-size:16px; margin-bottom:16px; }
+
+  label{ display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px; margin-top:14px; }
+  label:first-of-type{ margin-top:0; }
+  input[type=text], textarea, select{
+    width:100%; padding:11px 14px; border-radius:8px; border:1.5px solid var(--line);
+    background:var(--panel2); color:var(--text); font-family:'Inter',sans-serif; font-size:14px;
+  }
+  textarea{ resize:vertical; min-height:70px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+  .tpl-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-top:4px; }
+  .tpl-card{
+    border:1.5px solid var(--line); border-radius:10px; padding:12px; cursor:pointer;
+    background:var(--panel2); transition:all .15s ease; position:relative;
+  }
+  .tpl-card:hover{ border-color:var(--accent); }
+  .tpl-card.selected{ border-color:var(--accent); background:rgba(232,89,140,0.1); }
+  .tpl-card .emoji{ font-size:22px; }
+  .tpl-card strong{ display:block; font-size:13px; margin-top:4px; }
+  .tpl-card span{ font-size:11px; color:var(--muted); }
+  .preview-link{
+    display:block; margin-top:8px; font-size:10.5px; text-align:center; padding:5px;
+    border-radius:6px; border:1px solid var(--line); color:var(--muted); text-decoration:none;
+    transition:all .15s ease;
+  }
+  .preview-link:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .generate-btn{
+    margin-top:20px; width:100%; padding:14px; border:none; border-radius:10px; cursor:pointer;
+    background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px;
+  }
+  .generate-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .result{
+    display:none; margin-top:18px; padding:16px; border-radius:10px;
+    background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.3);
+  }
+  .result.show{ display:block; }
+  .result-link{
+    display:flex; gap:8px; margin-top:10px;
+  }
+  .result-link input{ flex:1; font-family:'IBM Plex Mono',monospace; font-size:12.5px; }
+  .result-link button{
+    padding:0 16px; border:none; border-radius:8px; cursor:pointer;
+    background:var(--good); color:#0A2A1E; font-weight:700; font-size:13px; white-space:nowrap;
+  }
+
+  .log-item{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:12px 14px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px;
+    background:var(--panel2);
+  }
+  .log-item .meta{ font-size:12.5px; color:var(--muted); }
+  .log-item .meta strong{ color:var(--text); font-size:13.5px; }
+  .log-item .actions{ display:flex; gap:6px; align-items:center; }
+  .log-item button{
+    font-size:11.5px; padding:6px 10px; border-radius:6px; border:1px solid var(--line);
+    background:transparent; color:var(--muted); cursor:pointer;
+  }
+  .log-item button:hover{ border-color:var(--accent); color:var(--accent); }
+  .badge{
+    font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  .badge.paid{ background:rgba(52,211,153,0.15); color:var(--good); }
+  .badge.pending{ background:rgba(251,191,36,0.15); color:#FBBF24; }
+  .toggle-paid{ cursor:pointer; border:none; }
+  .toggle-paid.mark-paid{ background:var(--good); color:#0A2A1E; font-weight:700; }
+  .toggle-paid.mark-pending{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+  .empty-note{ color:var(--muted); font-size:13px; text-align:center; padding:20px; }
+
+  .config-note{ font-size:12px; color:var(--muted); margin-top:6px; }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <h1>🔒 Love Pages Admin</h1>
+  <p>This dashboard is for generating personalized page links. Enter your passphrase to continue.</p>
+  <input type="password" id="pwInput" placeholder="Passphrase">
+  <button id="pwSubmit">Unlock</button>
+  <div class="err" id="pwErr"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="top">
+    <div>
+      <h1>Love Pages Dashboard</h1>
+      <span>Generate a personalized link, send it, done.</span>
+    </div>
+    <button class="logout" id="logoutBtn">Lock dashboard</button>
+  </div>
+
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <div class="panel">
+    <h2>1 · Choose a template</h2>
+    <div class="tpl-grid" id="tplGrid"></div>
+    <p class="config-note">Add more templates by editing the <span class="mono">TEMPLATES</span> list at the top of this file's script.</p>
+  </div>
+
+  <div class="panel">
+    <h2>2 · Customer details</h2>
+    <div class="row2">
+      <div>
+        <label>Recipient's name</label>
+        <input type="text" id="fName" placeholder="e.g. Riya">
+      </div>
+      <div>
+        <label>Order reference (just for your log)</label>
+        <input type="text" id="fRef" placeholder="e.g. Instagram DM - Aug 8">
+      </div>
+    </div>
+    <label>Custom message</label>
+    <textarea id="fMessage" placeholder="Write the message that will appear on their page..."></textarea>
+
+    <button class="generate-btn" id="genBtn" disabled>Generate Link</button>
+
+    <div class="result" id="result">
+      <strong>✓ Link ready</strong>
+      <div class="result-link">
+        <input type="text" id="resultUrl" readonly>
+        <button id="copyBtn">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>3 · Sent links log</h2>
+    <div id="logList"></div>
+  </div>
+</div>
+
+<script>
+  // ============ CONFIGURE THESE ============
+  const PASSWORD = "changeme123";           // change this before uploading
+  const BASE_URL = "https://hemant.github.io/love-pages/"; // your GitHub Pages base folder
+  const PRICE = 399;                        // your fixed price per order, used for revenue stats
+
+  const TEMPLATES = [
+    { key:'cat',      label:'Cute Cat',       emoji:'🐱', file:'cat-love-demo.html',     desc:'Tap-to-reveal cat' },
+    { key:'flower',   label:'Flower Garden',  emoji:'🌸', file:'flower-demo.html',       desc:'Tap flowers to bloom' },
+    { key:'jar',      label:'Reasons Jar',    emoji:'🫙', file:'jar-demo.html',          desc:'Pull-a-reason cards' },
+    { key:'playful',  label:'Playful Quiz',   emoji:'🥹', file:'playful-quiz-demo.html', desc:'Multi-question tease' },
+    { key:'proposeq', label:'Propose Quiz',   emoji:'💭', file:'propose-quiz-demo.html', desc:'Playful proposal quiz' },
+    { key:'scratch',  label:'Scratch & Reveal', emoji:'🎁', file:'scratch-demo.html',    desc:'Scratch-off message' },
+    { key:'timeline', label:'Our Story',      emoji:'📸', file:'timeline-demo.html',     desc:'Relationship timeline' },
+    { key:'levelup',  label:'Level Up',       emoji:'🎮', file:'levelup-demo.html',      desc:'Gamer XP bar unlock' },
+    { key:'retro',    label:'Retro Message',  emoji:'💾', file:'retro-demo.html',        desc:'Windows 98 nostalgia' },
+    { key:'trophy',   label:'Mission Unlock', emoji:'🏆', file:'trophy-demo.html',       desc:'Achievement reveal' },
+    { key:'rocket',   label:'Rocket Launch',  emoji:'🚀', file:'rocket-demo.html',       desc:'Countdown to message' },
+    { key:'sorry',    label:'Sorry Page',     emoji:'🥺', file:'sorry-demo.html',        desc:'Rain to sunshine' },
+    { key:'propose',  label:'Propose Page',   emoji:'💍', file:'propose-demo.html',      desc:'Runaway No button' },
+    // Add new templates here as you build them, e.g.:
+    // { key:'zodiac', label:'Zodiac Match', emoji:'✨', file:'zodiac-demo.html', desc:'Compatibility card' },
+  ];
+  // ==========================================
+
+  // ---- Gate ----
+  const gate = document.getElementById('gate');
+  const dashboard = document.getElementById('dashboard');
+  function tryUnlock(){
+    const val = document.getElementById('pwInput').value;
+    if(val === PASSWORD){
+      sessionStorage.setItem('lp_unlocked', '1');
+      gate.style.display = 'none';
+      dashboard.style.display = 'block';
+      renderLog();
+    } else {
+      document.getElementById('pwErr').textContent = 'Wrong passphrase.';
+    }
+  }
+  document.getElementById('pwSubmit').addEventListener('click', tryUnlock);
+  document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+  document.getElementById('logoutBtn').addEventListener('click', ()=>{
+    sessionStorage.removeItem('lp_unlocked');
+    location.reload();
+  });
+  if(sessionStorage.getItem('lp_unlocked') === '1'){
+    gate.style.display = 'none';
+    dashboard.style.display = 'block';
+    renderLog();
+  }
+
+  // ---- Template selection ----
+  let selectedTpl = null;
+  const tplGrid = document.getElementById('tplGrid');
+  TEMPLATES.forEach(t=>{
+    const card = document.createElement('div');
+    card.className = 'tpl-card';
+    card.innerHTML = `<div class="emoji">${t.emoji}</div><strong>${t.label}</strong><span>${t.desc}</span>`;
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedTpl = t;
+      checkFormReady();
+    });
+
+    const previewLink = document.createElement('a');
+    previewLink.className = 'preview-link';
+    previewLink.textContent = '▶ Preview';
+    previewLink.href = new URL(t.file, BASE_URL).toString();
+    previewLink.target = '_blank';
+    previewLink.addEventListener('click', e => e.stopPropagation()); // don't select the card when previewing
+    card.appendChild(previewLink);
+
+    tplGrid.appendChild(card);
+  });
+
+  // ---- Form ready check ----
+  const fName = document.getElementById('fName');
+  const fMessage = document.getElementById('fMessage');
+  const genBtn = document.getElementById('genBtn');
+  function checkFormReady(){
+    genBtn.disabled = !(selectedTpl && fName.value.trim());
+  }
+  fName.addEventListener('input', checkFormReady);
+
+  // ---- Generate link ----
+  genBtn.addEventListener('click', ()=>{
+    const name = fName.value.trim();
+    const message = fMessage.value.trim();
+    const ref = document.getElementById('fRef').value.trim();
+
+    const url = new URL(selectedTpl.file, BASE_URL);
+    url.searchParams.set('name', name);
+    if(message) url.searchParams.set('message', message);
+    const finalUrl = url.toString();
+
+    document.getElementById('resultUrl').value = finalUrl;
+    document.getElementById('result').classList.add('show');
+
+    saveLogEntry({ name, ref, template:selectedTpl.label, url:finalUrl, date:new Date().toISOString(), paid:false });
+    renderLog();
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('resultUrl');
+    input.select();
+    navigator.clipboard.writeText(input.value);
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(()=>btn.textContent = original, 1500);
+  });
+
+  // ---- Local order log (stored only in your browser) ----
+  function getLog(){
+    try{ return JSON.parse(localStorage.getItem('lp_orders') || '[]'); }
+    catch(e){ return []; }
+  }
+  function saveLogEntry(entry){
+    const log = getLog();
+    log.unshift(entry);
+    localStorage.setItem('lp_orders', JSON.stringify(log));
+  }
+  function deleteLogEntry(idx){
+    const log = getLog();
+    log.splice(idx,1);
+    localStorage.setItem('lp_orders', JSON.stringify(log));
+    renderLog();
+  }
+  function togglePaid(idx){
+    const log = getLog();
+    log[idx].paid = !log[idx].paid;
+    localStorage.setItem('lp_orders', JSON.stringify(log));
+    renderLog();
+  }
+  function renderStats(log){
+    const total = log.length;
+    const paid = log.filter(e=>e.paid).length;
+    const pending = total - paid;
+    const revenue = paid * PRICE;
+    const statsGrid = document.getElementById('statsGrid');
+    statsGrid.innerHTML = `
+      <div class="stat-card"><div class="val">${total}</div><div class="lbl">Total Orders</div></div>
+      <div class="stat-card revenue"><div class="val">₹${revenue}</div><div class="lbl">Revenue Collected</div></div>
+      <div class="stat-card"><div class="val">${paid}</div><div class="lbl">Paid Orders</div></div>
+      <div class="stat-card pending"><div class="val">${pending}</div><div class="lbl">Pending Payment</div></div>
+    `;
+  }
+  function renderLog(){
+    const log = getLog();
+    renderStats(log);
+    const listEl = document.getElementById('logList');
+    if(log.length === 0){
+      listEl.innerHTML = '<div class="empty-note">No links generated yet — your first one will show up here.</div>';
+      return;
+    }
+    listEl.innerHTML = '';
+    log.forEach((entry, i)=>{
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      const dateStr = new Date(entry.date).toLocaleString();
+      const paidBadge = entry.paid
+        ? `<span class="badge paid">✓ Paid</span>`
+        : `<span class="badge pending">Pending</span>`;
+      item.innerHTML = `
+        <div class="meta"><strong>${entry.name}</strong> · ${entry.template} · ${dateStr}${entry.ref ? ' · '+entry.ref : ''}</div>
+        <div class="actions">
+          ${paidBadge}
+          <button class="toggle-paid ${entry.paid ? 'mark-pending' : 'mark-paid'}">${entry.paid ? 'Mark Pending' : 'Mark Paid'}</button>
+          <button class="copy-log">Copy link</button>
+          <button class="del-log">Delete</button>
+        </div>
+      `;
+      item.querySelector('.toggle-paid').addEventListener('click', ()=>togglePaid(i));
+      item.querySelector('.copy-log').addEventListener('click', ()=>navigator.clipboard.writeText(entry.url));
+      item.querySelector('.del-log').addEventListener('click', ()=>deleteLogEntry(i));
+      listEl.appendChild(item);
+    });
+  }
+</script>
+
+</body>
+</html>

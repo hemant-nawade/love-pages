@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Jar of Reasons 🫙</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    background:linear-gradient(160deg,#FFF6E9 0%, #FFE8F0 60%, #F3E8FF 100%);
+    font-family:'Quicksand',sans-serif;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; padding:20px;
+  }
+  h1{ font-family:'Playfair Display',serif; color:#C2185B; font-size:clamp(22px,5vw,28px); text-align:center; margin-bottom:6px; z-index:2; }
+  .sub{ color:#a15a76; font-size:13.5px; margin-bottom:24px; text-align:center; z-index:2; }
+
+  .jar-wrap{ position:relative; z-index:2; width:150px; height:180px; }
+  .jar-lid{ position:absolute; top:0; left:15px; width:120px; height:22px; background:#D4A24C; border-radius:8px 8px 4px 4px; }
+  .jar-body{
+    position:absolute; top:20px; left:5px; width:140px; height:150px;
+    background:rgba(255,255,255,0.5); border:3px solid rgba(200,180,220,0.6);
+    border-radius:14px 14px 28px 28px; backdrop-filter:blur(2px); overflow:hidden;
+  }
+  .note{
+    position:absolute; width:24px; height:18px; background:#FFEB99; border-radius:3px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.15); animation:bob2 3s ease-in-out infinite;
+  }
+
+  .pull-btn{
+    z-index:2; margin-top:24px; font-family:'Quicksand',sans-serif; font-weight:700; font-size:15px;
+    padding:13px 28px; border-radius:999px; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#F783C4,#C2185B); color:white;
+    box-shadow:0 8px 20px rgba(194,24,91,0.35); transition:transform .15s ease;
+  }
+  .pull-btn:hover{ transform:scale(1.05); }
+
+  @keyframes bob2{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-4px) rotate(4deg); } }
+
+  .card-reveal{
+    z-index:2; margin-top:24px; background:white; border-radius:16px; padding:20px 26px;
+    max-width:300px; text-align:center; font-size:14.5px; color:#7a3a52;
+    box-shadow:0 10px 30px rgba(194,24,91,0.15); min-height:24px;
+    opacity:0; transform:scale(0.9); transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .card-reveal.show{ opacity:1; transform:scale(1); }
+  .counter{ z-index:2; font-size:12px; color:#c2185b; opacity:0.6; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1 id="title">A jar of reasons I love Riya</h1>
+<p class="sub">pull one out, then another, and another 🫙</p>
+
+<div class="jar-wrap">
+  <div class="jar-lid"></div>
+  <div class="jar-body" id="jarBody"></div>
+</div>
+
+<button class="pull-btn" id="pullBtn">Pull a reason 🎀</button>
+<div class="card-reveal" id="cardReveal"></div>
+<p class="counter" id="counter"></p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name');
+  if(name) document.getElementById('title').textContent = `A jar of reasons I love ${name}`;
+
+  const customList = params.get('reasons');
+  const REASONS = customList ? customList.split('|') : [
+    "The way you laugh at your own jokes before you even finish them.",
+    "How you remember tiny things I mentioned once, weeks ago.",
+    "Your voice is the first thing I want to hear every morning.",
+    "You make ordinary days feel like an adventure.",
+    "The way you get excited about the smallest good news.",
+    "How safe I feel just being near you.",
+    "Your terrible puns that somehow always make me smile.",
+    "The way you look at me when you think I'm not noticing.",
+    "You believe in me even when I don't believe in myself.",
+    "Simply put — you're my favorite person on this entire planet."
+  ];
+
+  // decorative floating notes in jar
+  const jarBody = document.getElementById('jarBody');
+  for(let i=0;i<8;i++){
+    const n = document.createElement('div');
+    n.className = 'note';
+    n.style.left = (10 + Math.random()*95) + 'px';
+    n.style.top = (10 + Math.random()*115) + 'px';
+    n.style.transform = `rotate(${Math.random()*30-15}deg)`;
+    n.style.animationDelay = (Math.random()*3)+'s';
+    jarBody.appendChild(n);
+  }
+
+  let used = [];
+  const reveal = document.getElementById('cardReveal');
+  const counter = document.getElementById('counter');
+  document.getElementById('pullBtn').addEventListener('click', ()=>{
+    if(used.length === REASONS.length) used = [];
+    let idx;
+    do{ idx = Math.floor(Math.random()*REASONS.length); } while(used.includes(idx) && used.length < REASONS.length);
+    used.push(idx);
+
+    reveal.classList.remove('show');
+    setTimeout(()=>{
+      reveal.textContent = REASONS[idx];
+      reveal.classList.add('show');
+    }, 150);
+    counter.textContent = `${used.length} / ${REASONS.length} reasons pulled`;
+  });
+</script>
+
+</body>
+</html>

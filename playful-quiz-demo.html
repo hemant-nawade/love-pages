@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ek Second Ruko 🥹</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    background:linear-gradient(160deg,#FF9A9E 0%, #FECFEF 45%, #FED6E3 100%);
+    background-size:200% 200%;
+    animation:bgMove 10s ease infinite;
+    font-family:'Poppins',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; padding:16px;
+  }
+  @keyframes bgMove{ 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+
+  .sticker{
+    position:absolute; font-size:22px; opacity:0.55; pointer-events:none;
+    animation:floaty 6s ease-in-out infinite;
+  }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-16px) rotate(8deg); } }
+
+  .phone-card{
+    position:relative; z-index:2;
+    width:100%; max-width:360px;
+    background:white;
+    border-radius:28px;
+    padding:30px 26px 34px;
+    box-shadow:0 25px 60px rgba(214,51,108,0.3);
+    text-align:center;
+    min-height:340px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+
+  .step{ display:none; width:100%; animation:stepIn .4s cubic-bezier(.34,1.56,.64,1); }
+  .step.active{ display:block; }
+  @keyframes stepIn{ from{ opacity:0; transform:translateY(14px) scale(0.96); } to{ opacity:1; transform:translateY(0) scale(1); } }
+
+  .emoji-big{ font-size:46px; margin-bottom:12px; display:inline-block; animation:pop3 .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop3{ 0%{transform:scale(0);} 70%{transform:scale(1.25);} 100%{transform:scale(1);} }
+
+  h2{
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:19px; color:#C2185B;
+    margin-bottom:22px; line-height:1.35;
+  }
+
+  .btn-row3{ display:flex; gap:12px; justify-content:center; position:relative; min-height:52px; }
+  button{
+    font-family:'Baloo 2', sans-serif; font-weight:700; font-size:14.5px;
+    padding:12px 22px; border-radius:999px; border:none; cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .yes-btn{
+    background:linear-gradient(135deg,#FF6B9D,#C2185B); color:white;
+    box-shadow:0 8px 18px rgba(194,24,91,0.4);
+  }
+  .yes-btn:hover{ transform:scale(1.08); }
+  .no-btn{
+    background:#FFF0F5; color:#a15a76; border:1.5px solid #FFD6E5;
+    position:relative; transition:transform .15s ease;
+  }
+
+  .tease{
+    font-size:12.5px; color:#C2185B; margin-top:14px; min-height:16px;
+    font-weight:600; opacity:0; transition:opacity .3s ease;
+  }
+  .tease.show{ opacity:1; }
+
+  .progress-dots{ display:flex; gap:6px; justify-content:center; margin-top:24px; }
+  .dot{ width:7px; height:7px; border-radius:50%; background:#FFD6E5; transition:all .3s ease; }
+  .dot.filled{ background:#C2185B; width:18px; border-radius:4px; }
+
+  /* final reveal */
+  .final-emoji{ font-size:58px; margin-bottom:14px; animation:pop3 .6s cubic-bezier(.34,1.56,.64,1); }
+  .final-msg{ font-size:15px; color:#7a3a52; line-height:1.6; margin-bottom:6px; }
+  .final-title{ font-family:'Baloo 2', sans-serif; font-size:21px; color:#C2185B; font-weight:800; margin-bottom:12px; }
+
+  .confetti2{
+    position:fixed; font-size:18px; pointer-events:none; z-index:6;
+    animation:confFall linear forwards;
+  }
+  @keyframes confFall{ to{ transform:translateY(110vh) rotate(600deg); opacity:0.1; } }
+</style>
+</head>
+<body>
+
+<div class="phone-card" id="card">
+
+  <!-- STEP 0 -->
+  <div class="step active" data-step="0">
+    <div class="emoji-big">🥹</div>
+    <h2 id="q0">Ek second ruko na, kuch pucchna hai...</h2>
+    <div class="btn-row3">
+      <button class="yes-btn" data-next>haan bolo</button>
+      <button class="no-btn" data-dodge>abhi nahi</button>
+    </div>
+    <div class="tease" id="tease0"></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step" data-step="1">
+    <div class="emoji-big">😳</div>
+    <h2>Kya tumhe pata hai tum kitni cute ho?</h2>
+    <div class="btn-row3">
+      <button class="yes-btn" data-next>obviously 💅</button>
+      <button class="no-btn" data-dodge>nahi yaar</button>
+    </div>
+    <div class="tease" id="tease1"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" data-step="2">
+    <div class="emoji-big">🙈</div>
+    <h2>Agar main ek baat bolu, promise nahi hasogi?</h2>
+    <div class="btn-row3">
+      <button class="yes-btn" data-next>promise 🤞</button>
+      <button class="no-btn" data-dodge>guarantee nahi</button>
+    </div>
+    <div class="tease" id="tease2"></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" data-step="3">
+    <div class="emoji-big">🫣</div>
+    <h2 id="q3">Toh sunlo... roz sochta hoon tumhare baare mein. Believe karogi?</h2>
+    <div class="btn-row3">
+      <button class="yes-btn" data-next>believe kar liya 🥹</button>
+      <button class="no-btn" data-dodge>jhooth bol rahe ho</button>
+    </div>
+    <div class="tease" id="tease3"></div>
+  </div>
+
+  <!-- FINAL -->
+  <div class="step" data-step="4">
+    <div class="final-emoji">💖</div>
+    <div class="final-title" id="finalTitle">Bas itna hi kehna tha, Riya</div>
+    <p class="final-msg" id="finalMsg"></p>
+  </div>
+
+  <div class="progress-dots" id="dots"></div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name') || 'Riya';
+  const finalMessage = params.get('message') || "Tumhare saath baat karke din achha ho jaata hai. Tumse pyaar karta hoon, seriously. 💗";
+
+  document.getElementById('q0').textContent = `Ek second ruko na ${name}, kuch pucchna hai...`;
+  document.getElementById('finalTitle').textContent = `Bas itna hi kehna tha, ${name}`;
+  document.getElementById('finalMsg').textContent = finalMessage;
+
+  // floating stickers
+  const stickers = ['💕','✨','🌸','💫','🎀','😳'];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('div');
+    s.className = 'sticker';
+    s.textContent = stickers[Math.floor(Math.random()*stickers.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*4)+'s';
+    s.style.animationDuration = (5+Math.random()*4)+'s';
+    document.body.appendChild(s);
+  }
+
+  const TEASES = [
+    "arre itna mushkil sawaal nahi tha 😭",
+    "chalega nahi ye option, try again 👉👈",
+    "mann toh haan hi kehna chahta hai na?",
+    "acha acha, ek aur chance deta hoon",
+    "tumhara dil khud ko hi dhoka de raha hai",
+    "no jaayega hi nahi, believe me"
+  ];
+
+  const totalSteps = 5;
+  let current = 0;
+
+  const dotsEl = document.getElementById('dots');
+  for(let i=0;i<totalSteps-1;i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    dotsEl.appendChild(d);
+  }
+  function updateDots(){
+    document.querySelectorAll('.dot').forEach((d,i)=>{
+      d.classList.toggle('filled', i <= current);
+    });
+  }
+  updateDots();
+
+  function goToStep(n){
+    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+    document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+    current = n;
+    updateDots();
+    if(n === totalSteps-1){
+      launchConfetti();
+      dotsEl.style.display = 'none';
+    }
+  }
+
+  document.querySelectorAll('[data-next]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const stepEl = btn.closest('.step');
+      const stepNum = parseInt(stepEl.dataset.step);
+      goToStep(stepNum + 1);
+    });
+  });
+
+  document.querySelectorAll('[data-dodge]').forEach(btn=>{
+    let teaseIdx = 0;
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const stepEl = btn.closest('.step');
+      const stepNum = stepEl.dataset.step;
+      const teaseEl = document.getElementById('tease'+stepNum);
+
+      // move button randomly within the row
+      const row = btn.closest('.btn-row3');
+      const rowRect = row.getBoundingClientRect();
+      const maxX = rowRect.width * 0.35;
+      const x = (Math.random()-0.5) * maxX * 2;
+      const y = (Math.random()-0.5) * 30;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+
+      if(teaseEl){
+        teaseEl.textContent = TEASES[teaseIdx % TEASES.length];
+        teaseEl.classList.add('show');
+        teaseIdx++;
+      }
+    });
+    btn.addEventListener('mouseenter', ()=>{
+      const row = btn.closest('.btn-row3');
+      const rowRect = row.getBoundingClientRect();
+      const maxX = rowRect.width * 0.3;
+      const x = (Math.random()-0.5) * maxX * 2;
+      const y = (Math.random()-0.5) * 26;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  });
+
+  function launchConfetti(){
+    const emojis = ['🎉','💖','✨','🌸','💫','🎀'];
+    for(let i=0;i<36;i++){
+      const c = document.createElement('div');
+      c.className = 'confetti2';
+      c.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      c.style.left = Math.random()*100+'%';
+      c.style.top = '-20px';
+      c.style.animationDuration = (2+Math.random()*2)+'s';
+      c.style.animationDelay = (Math.random()*0.6)+'s';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(), 4500);
+    }
+  }
+</script>
+
+</body>
+</html>

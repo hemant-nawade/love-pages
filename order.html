@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Your Personalized Page 💌</title>
+<meta name="description" content="Pick a template, tell us who it's for, and get a personalized animated love page.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2430; --paper:#FFF8F5; --stamp:#E8598C; --stamp2:#7C3AED;
+    --slate:#6B7280; --line:#F0DCE4; --good:#22C55E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:linear-gradient(160deg,#FFF3F7,#FFF9F0);
+    color:var(--ink); font-family:'Inter',sans-serif;
+  }
+  h1,h2,h3{ font-family:'Space Grotesk',sans-serif; }
+  header{ text-align:center; padding:40px 20px 24px; }
+  header h1{ font-size:28px; color:var(--stamp); margin-bottom:6px; }
+  header p{ color:var(--slate); font-size:14.5px; }
+
+  .cat-tabs{
+    display:flex; justify-content:center; gap:10px; margin:20px 0 4px;
+  }
+  .cat-tab{
+    padding:10px 22px; border-radius:999px; border:1.5px solid var(--line); background:white;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; cursor:pointer;
+    color:var(--slate); transition:all .2s ease;
+  }
+  .cat-tab.active{
+    background:linear-gradient(135deg,var(--stamp),var(--stamp2)); color:white; border-color:transparent;
+    box-shadow:0 6px 16px rgba(232,89,140,0.3);
+  }
+
+  main{ max-width:640px; margin:0 auto; padding:10px 20px 60px; }
+
+  .step{
+    background:white; border:1px solid var(--line); border-radius:16px;
+    padding:22px; margin-bottom:18px;
+  }
+  .step h2{ font-size:16px; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .step h2 .num{
+    width:24px; height:24px; border-radius:50%; background:var(--stamp); color:white;
+    display:inline-flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;
+  }
+
+  .tpl-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; }
+  .tpl-card{
+    border:1.5px solid var(--line); border-radius:14px; padding:16px; text-align:center; cursor:pointer;
+    transition:all .15s ease; background:#FFFCFA;
+  }
+  .tpl-card:hover{ transform:translateY(-2px); box-shadow:0 8px 18px rgba(232,89,140,0.1); }
+  .tpl-card.selected{ border-color:var(--stamp); background:#FFF0F5; }
+  .tpl-card .emoji{ font-size:30px; }
+  .tpl-card strong{ display:block; font-size:13.5px; margin-top:6px; }
+  .tpl-card span{ font-size:11px; color:var(--slate); }
+
+  label{ display:block; font-size:12.5px; color:var(--slate); margin:14px 0 6px; }
+  label:first-of-type{ margin-top:0; }
+  input[type=text], textarea{
+    width:100%; padding:11px 14px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Inter',sans-serif; font-size:14px;
+  }
+  textarea{ min-height:70px; resize:vertical; }
+
+  .price-row{
+    display:flex; align-items:center; justify-content:space-between;
+    background:#FFF0F5; border-radius:12px; padding:14px 18px; margin-top:16px;
+  }
+  .price-row .amount{ font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; color:var(--stamp); }
+  .price-row .label{ font-size:12.5px; color:var(--slate); }
+
+  .cta-btn{
+    width:100%; margin-top:16px; padding:15px; border:none; border-radius:12px; cursor:pointer;
+    background:linear-gradient(135deg,var(--stamp),var(--stamp2)); color:white;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;
+  }
+  .cta-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .instructions{
+    display:none; margin-top:16px; padding:16px; border-radius:12px;
+    background:#F0FDF4; border:1px solid #BBF7D0; font-size:13.5px; color:#166534; line-height:1.6;
+  }
+  .instructions.show{ display:block; }
+  .instructions ol{ padding-left:18px; margin-top:6px; }
+
+  footer{ text-align:center; padding:20px; color:var(--slate); font-size:12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💌 Get Your Personalized Page</h1>
+  <p>Pick a vibe, tell us who it's for, and we'll send you a link to share.</p>
+  <div class="cat-tabs">
+    <button class="cat-tab active" data-cat="her">For Her 💗</button>
+    <button class="cat-tab" data-cat="him">For Him 💙</button>
+    <button class="cat-tab" data-cat="any">Works for Both 💫</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="step">
+    <h2><span class="num">1</span> Choose a template</h2>
+    <div class="tpl-grid" id="tplGrid"></div>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">2</span> Who's it for?</h2>
+    <label>Their name</label>
+    <input type="text" id="fName" placeholder="e.g. Riya">
+    <label>Your message to them</label>
+    <textarea id="fMessage" placeholder="Write what you want their page to say..."></textarea>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">3</span> Pay & get your link</h2>
+    <div class="price-row">
+      <div>
+        <div class="label">Fixed price — no editing</div>
+        <div class="amount">₹399</div>
+      </div>
+      <div style="font-size:26px;">🔒</div>
+    </div>
+    <button class="cta-btn" id="ctaBtn" disabled>Send Order & Pay ₹399</button>
+
+    <div class="instructions" id="instructions">
+      <strong>Almost done — 2 quick steps:</strong>
+      <ol>
+        <li>We just opened WhatsApp with your order pre-filled — hit send.</li>
+        <li>We also opened the payment page in another tab — complete the ₹399 payment there.</li>
+      </ol>
+      Once we confirm your payment, we'll reply on WhatsApp with your personalized link — usually within 10–15 minutes. 💌
+    </div>
+  </div>
+
+</main>
+
+<footer>HemPDF Love Pages · made with 🩷</footer>
+
+<script>
+  // ============ CONFIGURE THESE ============
+  const OWNER_WHATSAPP = "919999999999";  // your WhatsApp number with country code, no + or spaces
+  const PAYMENT_LINK_URL = "https://razorpay.me/@yourshop/399"; // your fixed ₹399 Razorpay/Instamojo payment link
+  const TEMPLATES = [
+    { key:'cat',     label:'Cute Cat',      emoji:'🐱', desc:'Tap-to-reveal',         gender:'her' },
+    { key:'flower',  label:'Flower Garden', emoji:'🌸', desc:'Tap flowers to bloom',  gender:'her' },
+    { key:'jar',     label:'Reasons Jar',   emoji:'🫙', desc:'Pull-a-reason cards',   gender:'her' },
+    { key:'playful', label:'Playful Quiz',  emoji:'🥹', desc:'Multi-question tease',  gender:'her' },
+    { key:'scratch', label:'Scratch & Reveal', emoji:'🎁', desc:'Scratch-off message', gender:'her' },
+    { key:'levelup', label:'Level Up',      emoji:'🎮', desc:'Gamer XP bar unlock',   gender:'him' },
+    { key:'retro',   label:'Retro Message', emoji:'💾', desc:'Windows 98 nostalgia',  gender:'him' },
+    { key:'trophy',  label:'Mission Unlock',emoji:'🏆', desc:'Achievement reveal',    gender:'him' },
+    { key:'rocket',  label:'Rocket Launch', emoji:'🚀', desc:'Countdown to message',  gender:'him' },
+    { key:'proposeq',label:'Propose Quiz',  emoji:'💭', desc:'Playful proposal quiz', gender:'any' },
+    { key:'timeline',label:'Our Story',     emoji:'📸', desc:'Relationship timeline', gender:'any' },
+    { key:'sorry',   label:'Sorry Page',    emoji:'🥺', desc:'Rain to sunshine',      gender:'any' },
+    { key:'propose', label:'Propose',       emoji:'💍', desc:'Runaway No button',     gender:'any' },
+  ];
+  // ==========================================
+
+  let activeCat = 'her';
+  document.querySelectorAll('.cat-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      activeCat = tab.dataset.cat;
+      selectedTpl = null;
+      ctaBtn.disabled = true;
+      renderTemplates();
+    });
+  });
+
+  const tplGrid = document.getElementById('tplGrid');
+  let selectedTpl = null;
+  function renderTemplates(){
+    tplGrid.innerHTML = '';
+    const filtered = TEMPLATES.filter(t => activeCat === 'any' ? t.gender === 'any' : (t.gender === activeCat || t.gender === 'any'));
+    filtered.forEach(t=>{
+      const card = document.createElement('div');
+      card.className = 'tpl-card';
+      card.innerHTML = `<div class="emoji">${t.emoji}</div><strong>${t.label}</strong><span>${t.desc}</span>`;
+      card.addEventListener('click', ()=>{
+        document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedTpl = t;
+        checkReady();
+      });
+      tplGrid.appendChild(card);
+    });
+  }
+
+  const fName = document.getElementById('fName');
+  const fMessage = document.getElementById('fMessage');
+  const ctaBtn = document.getElementById('ctaBtn');
+  function checkReady(){
+    ctaBtn.disabled = !(selectedTpl && fName.value.trim());
+  }
+  fName.addEventListener('input', checkReady);
+  renderTemplates();
+
+  ctaBtn.addEventListener('click', ()=>{
+    const name = fName.value.trim();
+    const message = fMessage.value.trim();
+
+    const orderText = encodeURIComponent(
+      `New order 💌\nTemplate: ${selectedTpl.label}\nName: ${name}\nMessage: ${message || '(none provided)'}\n\nPayment: ₹399 (I'll complete this now)`
+    );
+    window.open(`https://wa.me/${OWNER_WHATSAPP}?text=${orderText}`, '_blank');
+    window.open(PAYMENT_LINK_URL, '_blank');
+
+    document.getElementById('instructions').classList.add('show');
+    ctaBtn.disabled = true;
+    ctaBtn.textContent = 'Order sent ✓';
+  });
+</script>
+
+</body>
+</html>

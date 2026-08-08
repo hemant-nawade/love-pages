@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /hemant-control-x7q2.html
+
+Sitemap: https://hemant.github.io/love-pages/sitemap.xml

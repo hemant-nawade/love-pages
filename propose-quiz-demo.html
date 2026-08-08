@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ek Chhota Sa Sawal 🥹</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    background:linear-gradient(-45deg,#FFDEE9,#FFF1DE,#FFE0F0,#FDE2E4);
+    background-size:400% 400%; animation:bgShift 12s ease infinite;
+    font-family:'Poppins',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; padding:20px;
+  }
+  @keyframes bgShift{ 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+
+  .heart{ position:absolute; bottom:-30px; font-size:20px; opacity:0.7; animation:floatUp linear infinite; }
+  @keyframes floatUp{ 0%{transform:translateY(0) rotate(0);opacity:0;} 10%{opacity:0.7;} 100%{transform:translateY(-105vh) rotate(340deg);opacity:0;} }
+
+  .card{
+    position:relative; z-index:2; background:rgba(255,255,255,0.92); backdrop-filter:blur(8px);
+    border-radius:26px; padding:38px 30px; max-width:380px; width:92%; text-align:center;
+    box-shadow:0 20px 60px rgba(214,51,108,0.22); min-height:260px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .progress{ display:flex; gap:6px; margin-bottom:20px; position:absolute; top:20px; left:50%; transform:translateX(-50%); }
+  .progress .dot{ width:7px; height:7px; border-radius:50%; background:#f3c6d4; transition:background .3s ease; }
+  .progress .dot.active{ background:#D6336C; }
+
+  .emoji-big{ font-size:44px; margin-bottom:12px; animation:pop2 .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop2{ 0%{transform:scale(0);} 70%{transform:scale(1.2);} 100%{transform:scale(1);} }
+
+  h2{
+    font-family:'Baloo 2',sans-serif; font-size:clamp(18px,5vw,22px); color:#7A1E3C;
+    margin-bottom:22px; line-height:1.35;
+  }
+  .opts{ display:flex; flex-direction:column; gap:12px; width:100%; }
+  .opt-btn{
+    font-family:'Poppins',sans-serif; font-weight:600; font-size:14.5px; padding:13px 18px;
+    border-radius:14px; border:1.5px solid #f3c6d4; background:white; color:#8a5266; cursor:pointer;
+    transition:all .18s ease;
+  }
+  .opt-btn:hover{ background:#FFF0F5; border-color:#D6336C; transform:translateY(-2px); }
+  .opt-btn.primary{
+    background:linear-gradient(135deg,#ff6b9d,#d6336c); color:white; border:none;
+    box-shadow:0 8px 20px rgba(214,51,108,0.35);
+  }
+
+  .final-row{ position:relative; display:flex; gap:14px; justify-content:center; min-height:56px; width:100%; }
+  #noBtn{ position:relative; transition:transform .15s ease; }
+
+  .reveal{ display:none; }
+  .reveal.show{ display:flex; flex-direction:column; align-items:center; animation:pop2 .5s ease; }
+  .reveal h2{ color:#D6336C; }
+  .reveal p{ font-size:14px; color:#8a5266; margin-top:6px; }
+
+  .confetti2{ position:fixed; top:-20px; z-index:5; font-size:18px; animation:confettiFall2 linear forwards; }
+  @keyframes confettiFall2{ to{ transform:translateY(110vh) rotate(720deg); opacity:0.2; } }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="progress" id="progress"></div>
+  <div id="stepArea"></div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name') || 'tum';
+  const finalMessage = params.get('message') || "Kyunki tumhare bina meri kahani adhuri hai. I love you, aaj, kal aur hamesha.";
+
+  // Every question has two options that BOTH move forward playfully — the fun is in the wording, not a real fork.
+  const STEPS = [
+    {
+      emoji:'👀',
+      text:`Ek chhota sa sawal hai, ${name}... ready ho?`,
+      options:[ { label:'Bilkul ready 😌', }, { label:'Thoda dar lag raha hai but ok 🙈' } ]
+    },
+    {
+      emoji:'😏',
+      text:'Sach batao... main thoda handsome/cute lagta hoon na?',
+      options:[ { label:'Obviously yes 😍' }, { label:'Thoda thoda 🤏😂' } ]
+    },
+    {
+      emoji:'🥹',
+      text:'Kya tumhe mere random memes bhejna acha lagta hai?',
+      options:[ { label:'Haan, best part of my day 💗' }, { label:'Sometimes cringe but haan 😂' } ]
+    },
+    {
+      emoji:'💭',
+      text:'Agar main ek din message na karu, tumhe miss hoga?',
+      options:[ { label:'Bahut zyada 🥺' }, { label:'Thoda thoda, chup mat karna 😤' } ]
+    },
+    { final:true }
+  ];
+
+  let current = 0;
+  const stepArea = document.getElementById('stepArea');
+  const progress = document.getElementById('progress');
+
+  STEPS.forEach((_,i)=>{
+    if(i < STEPS.length-1){
+      const d = document.createElement('div');
+      d.className = 'dot';
+      progress.appendChild(d);
+    }
+  });
+
+  function updateProgress(){
+    const dots = progress.querySelectorAll('.dot');
+    dots.forEach((d,i)=> d.classList.toggle('active', i <= current));
+  }
+
+  function renderStep(){
+    const step = STEPS[current];
+    if(step.final){
+      renderFinal();
+      return;
+    }
+    stepArea.innerHTML = `
+      <div class="emoji-big">${step.emoji}</div>
+      <h2>${step.text}</h2>
+      <div class="opts">
+        <button class="opt-btn primary" data-i="0">${step.options[0].label}</button>
+        <button class="opt-btn" data-i="1">${step.options[1].label}</button>
+      </div>
+    `;
+    updateProgress();
+    stepArea.querySelectorAll('.opt-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        current++;
+        renderStep();
+      });
+    });
+  }
+
+  function renderFinal(){
+    updateProgress();
+    stepArea.innerHTML = `
+      <div class="emoji-big">💍</div>
+      <h2>Toh phir... ${name}, will you be mine? 🥹</h2>
+      <div class="final-row" id="finalRow">
+        <button class="opt-btn primary" id="yesBtn">Haan, hamesha se thi 💕</button>
+        <button class="opt-btn" id="noBtn">Nahi</button>
+      </div>
+      <div class="reveal" id="revealBox">
+        <div class="emoji-big">🥹💖</div>
+        <h2>Pata tha tum "haan" hi bologi.</h2>
+        <p>${finalMessage}</p>
+      </div>
+    `;
+
+    const noBtn = document.getElementById('noBtn');
+    const finalRow = document.getElementById('finalRow');
+    function dodge(){
+      const rect = finalRow.getBoundingClientRect();
+      const maxX = rect.width - noBtn.offsetWidth - 10;
+      const x = (Math.random()-0.5) * maxX;
+      const y = (Math.random()-0.5) * 30;
+      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    }
+    noBtn.addEventListener('mouseenter', dodge);
+    noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodge(); });
+
+    document.getElementById('yesBtn').addEventListener('click', ()=>{
+      finalRow.style.display = 'none';
+      document.getElementById('revealBox').classList.add('show');
+      const confettiEmojis = ['🎉','💖','✨','🌸','💫'];
+      for(let i=0;i<45;i++){
+        const c = document.createElement('div');
+        c.className = 'confetti2';
+        c.textContent = confettiEmojis[Math.floor(Math.random()*confettiEmojis.length)];
+        c.style.left = Math.random()*100 + '%';
+        c.style.animationDuration = (2+Math.random()*2)+'s';
+        c.style.animationDelay = (Math.random()*0.6)+'s';
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 4500);
+      }
+    });
+  }
+
+  // floating hearts bg
+  const heartsPool = ['💗','💕','💖','💘','❤️'];
+  for(let i=0;i<20;i++){
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.textContent = heartsPool[Math.floor(Math.random()*heartsPool.length)];
+    h.style.left = Math.random()*100+'%';
+    h.style.fontSize = (14+Math.random()*18)+'px';
+    h.style.animationDuration = (8+Math.random()*8)+'s';
+    h.style.animationDelay = (Math.random()*8)+'s';
+    document.body.appendChild(h);
+  }
+
+  renderStep();
+</script>
+
+</body>
+</html>

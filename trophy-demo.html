@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Briefing 🏆</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    background:radial-gradient(circle at 50% 0%, #1e293b, #0f172a 70%);
+    font-family:'Poppins',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; padding:16px; color:white;
+  }
+  .grid-bg{
+    position:absolute; inset:0;
+    background-image:linear-gradient(rgba(56,189,248,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.06) 1px, transparent 1px);
+    background-size:32px 32px;
+  }
+  .card{
+    position:relative; z-index:2; width:100%; max-width:360px;
+    background:rgba(255,255,255,0.04); border:1px solid rgba(56,189,248,0.3);
+    border-radius:20px; padding:28px 24px; text-align:center; backdrop-filter:blur(6px);
+    box-shadow:0 0 50px rgba(56,189,248,0.15);
+  }
+  .step{ display:none; animation:sIn .4s cubic-bezier(.34,1.56,.64,1); }
+  .step.active{ display:block; }
+  @keyframes sIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);} }
+
+  .tag{ font-family:'Baloo 2',sans-serif; font-size:11px; color:#38BDF8; letter-spacing:2px; margin-bottom:8px; }
+  .emoji-b{ font-size:44px; margin-bottom:10px; }
+  h2{ font-family:'Baloo 2',sans-serif; font-size:18px; color:#F1F5F9; margin-bottom:20px; line-height:1.4; }
+
+  .btn-row4{ display:flex; gap:10px; justify-content:center; }
+  button{
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:13.5px;
+    padding:11px 18px; border-radius:10px; border:none; cursor:pointer; transition:transform .15s ease;
+  }
+  .go-btn{ background:linear-gradient(135deg,#38BDF8,#6366F1); color:white; box-shadow:0 6px 16px rgba(56,189,248,0.4); }
+  .go-btn:hover{ transform:scale(1.06); }
+  .skip-btn{ background:rgba(255,255,255,0.06); color:#94A3B8; border:1px solid rgba(255,255,255,0.15); }
+
+  .progress{ display:flex; gap:6px; justify-content:center; margin-top:22px; }
+  .pdot{ width:22px; height:4px; border-radius:2px; background:rgba(255,255,255,0.15); }
+  .pdot.on{ background:#38BDF8; }
+
+  .trophy-final{ font-size:60px; animation:tPop .6s cubic-bezier(.34,1.56,.64,1); margin-bottom:8px; }
+  @keyframes tPop{ 0%{transform:scale(0) rotate(-20deg);} 70%{transform:scale(1.25) rotate(8deg);} 100%{transform:scale(1) rotate(0);} }
+  .final-tag{ font-family:'Baloo 2',sans-serif; font-size:13px; color:#38BDF8; margin-bottom:6px; letter-spacing:1px; }
+  .final-h{ font-family:'Baloo 2',sans-serif; font-size:20px; color:white; font-weight:800; margin-bottom:12px; }
+  .final-p{ font-size:14px; color:#CBD5E1; line-height:1.6; }
+
+  .spark{ position:fixed; font-size:16px; pointer-events:none; z-index:6; animation:sparkUp 1.4s ease-out forwards; }
+  @keyframes sparkUp{ to{ transform:translateY(-120px) scale(1.2); opacity:0; } }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="card" id="card">
+
+  <div class="step active" data-step="0">
+    <div class="tag">MISSION BRIEFING</div>
+    <div class="emoji-b">🎯</div>
+    <h2 id="q0">Ready for a quick mission, champ?</h2>
+    <div class="btn-row4">
+      <button class="go-btn" data-next>let's go 🔥</button>
+      <button class="skip-btn" data-next>skip intro</button>
+    </div>
+    <div class="progress" id="dots"></div>
+  </div>
+
+  <div class="step" data-step="1">
+    <div class="tag">OBJECTIVE 1</div>
+    <div class="emoji-b">💪</div>
+    <h2>Rate yourself as a boyfriend, be honest.</h2>
+    <div class="btn-row4">
+      <button class="go-btn" data-next>10/10 obviously</button>
+      <button class="skip-btn" data-next>could be better</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="2">
+    <div class="tag">OBJECTIVE 2</div>
+    <div class="emoji-b">👀</div>
+    <h2>Someone's been thinking about you a lot lately.</h2>
+    <div class="btn-row4">
+      <button class="go-btn" data-next>who could it be 😏</button>
+      <button class="skip-btn" data-next>tell me now</button>
+    </div>
+  </div>
+
+  <div class="step" data-step="3">
+    <div class="trophy-final">🏆</div>
+    <div class="final-tag">ACHIEVEMENT UNLOCKED</div>
+    <div class="final-h" id="finalTitle">Best Person I Know</div>
+    <p class="final-p" id="finalMsg"></p>
+  </div>
+
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name') || 'bro';
+  const message = params.get('message') || "No cap, you make everything better just by being around. Proud to call you mine. 🏆";
+  document.getElementById('q0').textContent = `Ready for a quick mission, ${name}?`;
+  document.getElementById('finalTitle').textContent = `Certified ${name} Appreciation`;
+  document.getElementById('finalMsg').textContent = message;
+
+  const total = 4;
+  let current = 0;
+  const dotsEl = document.getElementById('dots');
+  for(let i=0;i<total-1;i++){
+    const d = document.createElement('div'); d.className='pdot'; dotsEl.appendChild(d);
+  }
+  function updateDots(){
+    document.querySelectorAll('.pdot').forEach((d,i)=>d.classList.toggle('on', i<=current));
+  }
+  updateDots();
+
+  function goTo(n){
+    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+    document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+    current = n;
+    updateDots();
+    if(n === total-1) burst();
+  }
+  document.querySelectorAll('[data-next]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const stepNum = parseInt(btn.closest('.step').dataset.step);
+      goTo(stepNum+1);
+    });
+  });
+
+  function burst(){
+    const emojis = ['✨','🏆','⭐','💫'];
+    for(let i=0;i<28;i++){
+      const s = document.createElement('div');
+      s.className = 'spark';
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.left = (50 + (Math.random()-0.5)*60) + '%';
+      s.style.top = '60%';
+      s.style.animationDelay = (Math.random()*0.5)+'s';
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 1800);
+    }
+  }
+</script>
+
+</body>
+</html>

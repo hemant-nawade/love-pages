@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hamari Kahani 📸</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Baloo+2:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    background:linear-gradient(160deg,#FFF3E0,#FFE8F0,#F3E8FF);
+    font-family:'Poppins',sans-serif;
+    padding:40px 16px 60px; position:relative;
+  }
+  h1{
+    font-family:'Baloo 2',sans-serif; color:#D6336C; text-align:center;
+    font-size:clamp(22px,5.5vw,28px); margin-bottom:6px;
+  }
+  .sub{ text-align:center; color:#a15a76; font-size:13.5px; margin-bottom:36px; }
+
+  .timeline{ max-width:420px; margin:0 auto; position:relative; }
+  .timeline::before{
+    content:''; position:absolute; left:50%; top:0; bottom:0; width:2px;
+    background:repeating-linear-gradient(180deg,#F783C4 0 8px, transparent 8px 16px);
+    transform:translateX(-50%);
+  }
+
+  .polaroid{
+    position:relative; width:220px; background:white; padding:12px 12px 30px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15); border-radius:4px;
+    margin:0 auto 46px; opacity:0; transform:translateY(30px) rotate(0deg);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.34,1.2,.64,1);
+  }
+  .polaroid.show{ opacity:1; transform:translateY(0) rotate(var(--tilt)); }
+  .polaroid:nth-child(odd){ margin-left:0; margin-right:auto; }
+  .polaroid:nth-child(even){ margin-left:auto; margin-right:0; }
+
+  .photo-box{
+    width:100%; height:150px; border-radius:2px;
+    display:flex; align-items:center; justify-content:center; font-size:44px;
+  }
+  .cap{ font-family:'Caveat',cursive; font-size:19px; color:#7A1E3C; text-align:center; margin-top:10px; }
+  .date{ font-family:'Poppins',sans-serif; font-size:10.5px; color:#c48; text-align:center; margin-top:2px; letter-spacing:1px; text-transform:uppercase; }
+
+  .final-note{
+    max-width:340px; margin:20px auto 0; background:white; border-radius:16px; padding:20px 24px;
+    text-align:center; font-size:14px; color:#7a3a52; box-shadow:0 10px 30px rgba(214,51,108,0.15);
+    opacity:0; transform:scale(0.9); transition:all .6s cubic-bezier(.34,1.2,.64,1);
+  }
+  .final-note.show{ opacity:1; transform:scale(1); }
+  .final-note .emoji{ font-size:30px; margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<h1 id="title">Hamari kahani, Riya 💕</h1>
+<p class="sub">scroll karke dekho</p>
+
+<div class="timeline" id="timeline"></div>
+<div class="final-note" id="finalNote"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name');
+  if(name) document.getElementById('title').textContent = `Hamari kahani, ${name} 💕`;
+
+  const finalMessage = params.get('message') || "Aur ye kahani abhi khatam nahi hui... best part toh abhi baaki hai. 🥹";
+
+  // Customizable via ?e1=Date|Emoji|Caption&e2=...  (defaults below if not provided)
+  const DEFAULT_EVENTS = [
+    { emoji:'👀', date:'Day 1', cap:'Jab pehli baar baat hui thi' },
+    { emoji:'😂', date:'Week 2', cap:'Jab tumne mera worst joke pe bhi hasi thi' },
+    { emoji:'🌙', date:'Month 1', cap:'Raat bhar phone pe baatein' },
+    { emoji:'🫶', date:'Today', cap:'Aur ab tum meri favorite insaan ho' },
+  ];
+
+  const timeline = document.getElementById('timeline');
+  const colors = ['#FDE2E4','#FFF3D6','#E0F2E9','#E3E8FF'];
+  DEFAULT_EVENTS.forEach((ev, i)=>{
+    const card = document.createElement('div');
+    card.className = 'polaroid';
+    card.style.setProperty('--tilt', (i%2===0 ? '-3deg' : '3deg'));
+    card.innerHTML = `
+      <div class="photo-box" style="background:${colors[i%colors.length]}">${ev.emoji}</div>
+      <div class="cap">${ev.cap}</div>
+      <div class="date">${ev.date}</div>
+    `;
+    timeline.appendChild(card);
+  });
+
+  const finalNote = document.getElementById('finalNote');
+  finalNote.innerHTML = `<div class="emoji">💌</div>${finalMessage}`;
+
+  // reveal on scroll
+  const cards = document.querySelectorAll('.polaroid');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) entry.target.classList.add('show');
+    });
+  }, { threshold: 0.3 });
+  cards.forEach(c=>observer.observe(c));
+
+  const noteObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{ if(entry.isIntersecting) finalNote.classList.add('show'); });
+  }, { threshold:0.3 });
+  noteObserver.observe(finalNote);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You? 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    min-height:100vh;
+    background:linear-gradient(-45deg, #ffdde1, #ffe8f0, #fff0f5, #ffd6e8);
+    background-size:400% 400%;
+    animation:bgShift 12s ease infinite;
+    font-family:'Poppins', sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+  @keyframes bgShift{
+    0%,100%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+  }
+
+  .heart{
+    position:absolute;
+    bottom:-40px;
+    font-size:22px;
+    opacity:0.75;
+    animation:floatUp linear infinite;
+    user-select:none;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.8; }
+    100%{ transform:translateY(-110vh) rotate(360deg); opacity:0; }
+  }
+
+  .card{
+    position:relative;
+    z-index:2;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(10px);
+    border-radius:24px;
+    padding:48px 36px;
+    max-width:420px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(214,51,108,0.25);
+    animation:cardIn 1s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes cardIn{
+    0%{ opacity:0; transform:scale(0.8) translateY(30px); }
+    100%{ opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .names{
+    font-family:'Playfair Display', serif;
+    font-size:15px;
+    color:#D6336C;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+
+  h1{
+    font-family:'Playfair Display', serif;
+    font-size:clamp(26px, 6vw, 34px);
+    color:#7A1E3C;
+    margin-bottom:14px;
+    line-height:1.2;
+  }
+
+  #typewriter{
+    font-size:15.5px;
+    color:#8a5266;
+    min-height:48px;
+    margin-bottom:26px;
+  }
+  #typewriter::after{
+    content:'|';
+    animation:blink 0.8s step-start infinite;
+  }
+  @keyframes blink{ 50%{opacity:0;} }
+
+  .btn-row{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    min-height:56px;
+  }
+
+  button{
+    font-family:'Poppins', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding:13px 28px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    transition:transform .15s ease;
+  }
+  #yesBtn{
+    background:linear-gradient(135deg, #ff6b9d, #d6336c);
+    color:white;
+    box-shadow:0 8px 20px rgba(214,51,108,0.4);
+  }
+  #yesBtn:hover{ transform:scale(1.08); }
+  #noBtn{
+    background:white;
+    color:#8a5266;
+    border:1.5px solid #f3c6d4;
+    position:relative;
+    transition:transform .15s ease;
+  }
+
+  .reveal{
+    display:none;
+    animation:cardIn .5s ease;
+  }
+  .reveal.show{ display:block; }
+  .reveal h2{
+    font-family:'Playfair Display', serif;
+    color:#D6336C;
+    font-size:24px;
+    margin-bottom:8px;
+  }
+  .reveal p{
+    color:#8a5266;
+    font-size:14px;
+  }
+  .big-emoji{ font-size:52px; margin-bottom:10px; animation:pop 0.6s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop{ 0%{transform:scale(0);} 70%{transform:scale(1.2);} 100%{transform:scale(1);} }
+
+  .confetti{
+    position:fixed; top:-20px; z-index:5;
+    font-size:18px;
+    animation:confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    to{ transform:translateY(110vh) rotate(720deg); opacity:0.2; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="names" id="names">FOR RIYA</div>
+  <h1>I have something to ask you...</h1>
+  <p id="typewriter"></p>
+
+  <div class="btn-row" id="btnRow">
+    <button id="yesBtn">Yes, obviously 💍</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <div class="reveal" id="revealBox">
+    <div class="big-emoji">🥹💖</div>
+    <h2>I knew you'd say yes.</h2>
+    <p>Forever starts now. I love you more than words on a screen could ever say.</p>
+  </div>
+</div>
+
+<script>
+  // ---- customization via URL: ?name=Riya&message=your custom line ----
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name') || 'Riya';
+  const customMessage = params.get('message') || "Every day with you feels like the best chapter of my life. So I have to ask...";
+  document.getElementById('names').textContent = 'FOR ' + name.toUpperCase();
+
+  // ---- floating hearts background ----
+  const heartsPool = ['💗','💕','💖','💘','❤️'];
+  for(let i=0;i<22;i++){
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.textContent = heartsPool[Math.floor(Math.random()*heartsPool.length)];
+    h.style.left = Math.random()*100 + '%';
+    h.style.fontSize = (16 + Math.random()*20) + 'px';
+    h.style.animationDuration = (8 + Math.random()*8) + 's';
+    h.style.animationDelay = (Math.random()*8) + 's';
+    document.body.appendChild(h);
+  }
+
+  // ---- typewriter effect ----
+  const tw = document.getElementById('typewriter');
+  let i = 0;
+  function typeNext(){
+    if(i <= customMessage.length){
+      tw.textContent = customMessage.slice(0, i);
+      i++;
+      setTimeout(typeNext, 28);
+    } else {
+      tw.style.setProperty('animation', 'none');
+    }
+  }
+  setTimeout(typeNext, 500);
+
+  // ---- runaway "No" button ----
+  const noBtn = document.getElementById('noBtn');
+  const btnRow = document.getElementById('btnRow');
+  function dodgeNo(){
+    const rowRect = btnRow.getBoundingClientRect();
+    const maxX = rowRect.width - noBtn.offsetWidth - 10;
+    const maxY = 40;
+    const x = (Math.random() - 0.5) * maxX;
+    const y = (Math.random() - 0.5) * maxY;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  }
+  noBtn.addEventListener('mouseenter', dodgeNo);
+  noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodgeNo(); });
+
+  // ---- Yes button: confetti + reveal ----
+  document.getElementById('yesBtn').addEventListener('click', ()=>{
+    document.getElementById('btnRow').style.display = 'none';
+    document.getElementById('revealBox').classList.add('show');
+
+    const confettiEmojis = ['🎉','💖','✨','🌸','💫'];
+    for(let i=0;i<40;i++){
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.textContent = confettiEmojis[Math.floor(Math.random()*confettiEmojis.length)];
+      c.style.left = Math.random()*100 + '%';
+      c.style.animationDuration = (2 + Math.random()*2) + 's';
+      c.style.animationDelay = (Math.random()*0.6) + 's';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(), 4500);
+    }
+  });
+</script>
+
+</body>
+</html>
