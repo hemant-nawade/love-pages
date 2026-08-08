@@ -125,13 +125,15 @@
       </div>
       <div style="font-size:26px;">🔒</div>
     </div>
-    <button class="cta-btn" id="ctaBtn" disabled>Send Order & Pay ₹399</button>
+
+    <button class="cta-btn" id="waBtn" disabled>Step 1 — Send Order on WhatsApp</button>
+    <button class="cta-btn" id="payBtn" style="display:none; margin-top:10px; background:linear-gradient(135deg,#22C55E,#16A34A);">Step 2 — Pay ₹399 Now</button>
 
     <div class="instructions" id="instructions">
       <strong>Almost done — 2 quick steps:</strong>
       <ol>
         <li>We just opened WhatsApp with your order pre-filled — hit send.</li>
-        <li>We also opened the payment page in another tab — complete the ₹399 payment there.</li>
+        <li>Come back here and tap "Pay ₹399 Now" to complete your payment.</li>
       </ol>
       Once we confirm your payment, we'll reply on WhatsApp with your personalized link — usually within 10–15 minutes. 💌
     </div>
@@ -169,7 +171,7 @@
       tab.classList.add('active');
       activeCat = tab.dataset.cat;
       selectedTpl = null;
-      ctaBtn.disabled = true;
+      waBtn.disabled = true;
       renderTemplates();
     });
   });
@@ -195,26 +197,33 @@
 
   const fName = document.getElementById('fName');
   const fMessage = document.getElementById('fMessage');
-  const ctaBtn = document.getElementById('ctaBtn');
+  const waBtn = document.getElementById('waBtn');
+  const payBtn = document.getElementById('payBtn');
   function checkReady(){
-    ctaBtn.disabled = !(selectedTpl && fName.value.trim());
+    waBtn.disabled = !(selectedTpl && fName.value.trim());
   }
   fName.addEventListener('input', checkReady);
   renderTemplates();
 
-  ctaBtn.addEventListener('click', ()=>{
+  waBtn.addEventListener('click', ()=>{
     const name = fName.value.trim();
     const message = fMessage.value.trim();
 
     const orderText = encodeURIComponent(
       `New order 💌\nTemplate: ${selectedTpl.label}\nName: ${name}\nMessage: ${message || '(none provided)'}\n\nPayment: ₹399 (I'll complete this now)`
     );
+    // Separate button tap = its own browser gesture, mobile allows this reliably
     window.open(`https://wa.me/${OWNER_WHATSAPP}?text=${orderText}`, '_blank');
-    window.open(PAYMENT_LINK_URL, '_blank');
 
     document.getElementById('instructions').classList.add('show');
-    ctaBtn.disabled = true;
-    ctaBtn.textContent = 'Order sent ✓';
+    waBtn.style.display = 'none';
+    payBtn.style.display = 'block';
+  });
+
+  payBtn.addEventListener('click', ()=>{
+    // Separate user tap = separate browser gesture, so mobile never blocks this
+    window.open(PAYMENT_LINK_URL, '_blank');
+    payBtn.textContent = 'Payment page opened ✓';
   });
 </script>
 
