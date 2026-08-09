@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,198 +5,230 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Send This To Bae — Personalized Love Pages</title>
 <meta name="description" content="Personalized animated love pages for her, for him, or for both. Pick a template, add your message, get your link in minutes.">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
   :root{
-    --bg:#0A0E1A; --bg2:#0F1424; --card:#151B30; --card2:#1B2340;
-    --line:#2A3358; --text:#EDEFFC; --slate:#9099C0;
-    --stamp:#FF4FA3; --stamp2:#A855F7; --cyan:#22D3EE; --good:#34D399;
-    --tier1:#22D3EE; --tier2:#34D399; --tier3:#FF4FA3; --tier4:#A855F7; --tier5:#FBBF24;
+    --bg:#000000; --card:#0D0D0D; --card2:#131313;
+    --line:rgba(255,255,255,0.14); --text:#ffffff; --slate:rgba(255,255,255,0.55);
+    --neon:#39FF14; --neon-soft:rgba(57,255,20,0.45);
   }
-  *{box-sizing:border-box;}
   body{
-    margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
-    position:relative; overflow-x:hidden;
+    background:#000; color:var(--text); font-family:'Outfit',sans-serif;
+    position:relative; cursor:none;
   }
-  h1,h2,h3,.display{ font-family:'Baloo 2',sans-serif; }
- 
-  @keyframes floatOrb{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(30px,-30px) scale(1.1); } }
-  @keyframes gradientShift{ 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
-  @keyframes glowPulse{ 0%,100%{ box-shadow:0 0 20px rgba(255,79,163,0.3); } 50%{ box-shadow:0 0 36px rgba(168,85,247,0.45); } }
- 
-  .orb-field{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
-  .orb{ position:absolute; border-radius:50%; filter:blur(90px); opacity:0.35; animation:floatOrb 14s ease-in-out infinite; }
-  .orb1{ width:420px; height:420px; background:var(--stamp); top:-140px; left:-100px; }
-  .orb2{ width:380px; height:380px; background:var(--stamp2); top:80px; right:-120px; animation-delay:-4s; }
-  .orb3{ width:340px; height:340px; background:var(--cyan); bottom:-120px; left:25%; animation-delay:-8s; }
- 
-  .grid-overlay{
-    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.4;
-    background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size:40px 40px;
+  @media (hover:none){ body{ cursor:auto; } }
+  h1,h2,h3{ font-family:'Playfair Display', Georgia, serif; font-weight:400; }
+
+  /* ---- background video ---- */
+  .video-container{
+    position:fixed; top:0; left:0; width:100vw; height:100vh; overflow:hidden; z-index:-2;
   }
- 
+  #bg-video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .video-overlay{
+    position:fixed; inset:0; z-index:-1;
+    background:linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 40%, #000 88%);
+  }
+  .bg-wash{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.12), transparent 60%);
+  }
+
   main{ position:relative; z-index:1; }
- 
+
   /* ---- HERO ---- */
-  .hero{ text-align:center; padding:64px 20px 40px; max-width:720px; margin:0 auto; }
+  .hero{ text-align:center; padding:80px 20px 50px; max-width:800px; margin:0 auto; }
   .hero .badge{
-    display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--line);
-    padding:7px 16px; border-radius:999px; font-size:12.5px; color:var(--slate); margin-bottom:20px;
+    display:inline-flex; align-items:center; gap:8px; background:#000; border:1px solid var(--line);
+    padding:8px 18px; border-radius:999px; font-size:12px; color:var(--slate); margin-bottom:26px;
+    letter-spacing:0.04em;
   }
-  .hero .dot{ width:7px; height:7px; border-radius:50%; background:var(--good); animation:pulse2 1.8s ease infinite; }
-  @keyframes pulse2{ 50%{ opacity:0.3; } }
-  .hero h1{
-    font-size:clamp(32px,6vw,52px); font-weight:800; line-height:1.1; margin-bottom:14px;
-    background:linear-gradient(90deg,var(--cyan),var(--stamp),var(--stamp2),var(--cyan));
-    background-size:250% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
-    animation:gradientShift 6s ease infinite;
+  .blinking-dot{ width:9px; height:9px; background:var(--neon); border-radius:50%; position:relative; display:inline-block; animation:pulse-glow 2s infinite ease-in-out; }
+  .blinking-dot::after{
+    content:''; position:absolute; top:-4px; left:-4px; right:-4px; bottom:-4px;
+    background:var(--neon-soft); border-radius:50%; animation:wave-expand 2s infinite ease-in-out;
   }
-  .hero p{ font-size:17px; color:var(--slate); max-width:480px; margin:0 auto 26px; line-height:1.6; }
-  .hero-ctas{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-  .btn-primary{
-    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; padding:14px 30px; border-radius:999px;
-    background:linear-gradient(135deg,var(--stamp),var(--stamp2)); color:white; text-decoration:none;
-    animation:glowPulse 2.4s ease infinite; transition:transform .15s ease;
+  @keyframes pulse-glow{ 0%,100%{ opacity:0.5; transform:scale(0.85); } 50%{ opacity:1; transform:scale(1.1); box-shadow:0 0 12px var(--neon-soft); } }
+  @keyframes wave-expand{ 0%{ transform:scale(0.6); opacity:0.9; } 100%{ transform:scale(2.2); opacity:0; } }
+
+  .hero-title{
+    font-size:clamp(34px,6.2vw,58px); line-height:1.12; margin-bottom:22px; letter-spacing:-0.01em;
+    text-shadow:0 4px 30px rgba(0,0,0,0.5);
   }
-  .btn-primary:hover{ transform:translateY(-2px) scale(1.03); }
-  .btn-ghost{
-    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; padding:14px 26px; border-radius:999px;
-    background:var(--card); color:var(--text); border:1.5px solid var(--line); text-decoration:none;
+  .hero-title .word-wrapper{ display:inline-block; overflow:hidden; vertical-align:bottom; padding-bottom:0.15em; margin-bottom:-0.15em; }
+  .hero-title .word-inner{ display:inline-block; opacity:0; transform:translateY(105%); filter:blur(20px); animation:word-reveal 1.3s cubic-bezier(0.05,0.9,0.1,1) forwards; }
+  @keyframes word-reveal{ 0%{ opacity:0; transform:translateY(105%); filter:blur(20px); } 30%{ opacity:1; } 100%{ opacity:1; transform:translateY(0); filter:blur(0); } }
+
+  .hero p{ font-size:16.5px; color:var(--slate); max-width:460px; margin:0 auto 30px; line-height:1.65; font-weight:300; }
+
+  .hero-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .btn-primary, .btn-ghost{
+    font-family:'Outfit',sans-serif; font-weight:500; font-size:15px; letter-spacing:0.02em;
+    padding:15px 30px; border-radius:999px; text-decoration:none; display:inline-flex; align-items:center; gap:10px;
+    transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
   }
-  .trust-row{ display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:30px; }
-  .trust-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--slate); font-weight:600; }
- 
+  .btn-primary{ background:var(--neon); color:#000; font-weight:600; box-shadow:0 4px 25px rgba(57,255,20,0.25); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 6px 30px rgba(57,255,20,0.4); }
+  .btn-ghost{ background:#000; color:#fff; border:1px solid var(--line); }
+  .btn-ghost:hover{ background:#fff; color:#000; border-color:#fff; transform:translateY(-2px); }
+
+  .trust-row{ display:flex; gap:26px; justify-content:center; flex-wrap:wrap; margin-top:36px; }
+  .trust-item{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--slate); font-weight:300; letter-spacing:0.02em; }
+
   /* ---- HOW IT WORKS ---- */
-  .how{ max-width:900px; margin:50px auto; padding:0 20px; }
-  .how h2{ text-align:center; font-size:26px; margin-bottom:36px; }
+  .how{ max-width:900px; margin:70px auto; padding:0 20px; }
+  .how h2{ text-align:center; font-size:28px; margin-bottom:44px; }
   .how-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; position:relative; }
-  .how-grid::before{
-    content:''; position:absolute; top:26px; left:12%; right:12%; height:2px;
-    background:repeating-linear-gradient(90deg,var(--line) 0 8px, transparent 8px 16px); z-index:0;
-  }
+  .how-grid::before{ content:''; position:absolute; top:26px; left:12%; right:12%; height:1px; background:repeating-linear-gradient(90deg,var(--line) 0 8px, transparent 8px 16px); z-index:0; }
   .how-step{ text-align:center; position:relative; z-index:1; }
   .how-step .circle{
-    width:52px; height:52px; border-radius:50%; background:var(--card); border:2px solid var(--stamp);
-    display:flex; align-items:center; justify-content:center; font-size:22px; margin:0 auto 12px;
-    box-shadow:0 0 18px rgba(255,79,163,0.25);
+    width:52px; height:52px; border-radius:50%; background:#000; border:1px solid var(--neon);
+    display:flex; align-items:center; justify-content:center; font-size:20px; margin:0 auto 14px;
+    box-shadow:0 0 20px rgba(57,255,20,0.2);
   }
-  .how-step strong{ display:block; font-size:13.5px; margin-bottom:4px; }
-  .how-step span{ font-size:11.5px; color:var(--slate); }
- 
+  .how-step strong{ display:block; font-size:13.5px; margin-bottom:4px; font-family:'Outfit',sans-serif; font-weight:500; }
+  .how-step span{ font-size:11.5px; color:var(--slate); font-weight:300; }
+
   /* ---- CATALOG ---- */
-  .catalog{ max-width:1000px; margin:60px auto 20px; padding:0 20px; }
-  .catalog h2{ text-align:center; font-size:26px; margin-bottom:8px; }
-  .catalog .sub{ text-align:center; color:var(--slate); font-size:14px; margin-bottom:24px; }
- 
-  .cat-tabs{ display:flex; justify-content:center; gap:10px; margin-bottom:24px; flex-wrap:wrap; }
+  .catalog{ max-width:1000px; margin:70px auto 20px; padding:0 20px; }
+  .catalog h2{ text-align:center; font-size:28px; margin-bottom:8px; }
+  .catalog .sub{ text-align:center; color:var(--slate); font-size:13.5px; margin-bottom:28px; font-weight:300; }
+
+  .cat-tabs{ display:flex; justify-content:center; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
   .cat-tab{
-    padding:10px 22px; border-radius:999px; border:1.5px solid var(--line); background:var(--card);
-    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; cursor:pointer;
-    color:var(--slate); transition:all .2s ease;
+    padding:10px 22px; border-radius:999px; border:1px solid var(--line); background:#000;
+    font-family:'Outfit',sans-serif; font-weight:500; font-size:13.5px; cursor:none; color:var(--slate); transition:all 0.25s ease;
   }
-  .cat-tab.active{
-    background:linear-gradient(135deg,var(--stamp),var(--stamp2)); color:white; border-color:transparent;
-    box-shadow:0 0 20px rgba(255,79,163,0.4);
-  }
- 
+  .cat-tab.active{ background:var(--neon); color:#000; border-color:var(--neon); font-weight:600; }
+
   .tpl-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
   .tpl-card{
-    background:var(--card); border:1.5px solid var(--line); border-radius:18px; padding:0; cursor:pointer;
-    overflow:hidden; transition:all .2s ease; position:relative;
+    background:var(--card); border:1px solid var(--line); border-radius:14px; cursor:none;
+    overflow:hidden; transition:all 0.25s ease; position:relative;
   }
-  .tpl-card:hover{ transform:translateY(-4px); border-color:var(--stamp); box-shadow:0 14px 32px rgba(255,79,163,0.2); }
-  .tpl-card.selected{ border-color:var(--cyan); box-shadow:0 0 0 3px rgba(34,211,238,0.25); }
-  .tpl-preview{ height:100px; display:flex; align-items:center; justify-content:center; font-size:44px; position:relative; }
+  .tpl-card:hover{ transform:translateY(-4px); border-color:var(--neon); box-shadow:0 14px 32px rgba(57,255,20,0.12); }
+  .tpl-card.selected{ border-color:var(--neon); box-shadow:0 0 0 2px rgba(57,255,20,0.25); }
+  .tpl-preview{ height:100px; display:flex; align-items:center; justify-content:center; font-size:42px; position:relative; background:#0A0A0A; }
   .tpl-body{ padding:14px 16px 16px; }
-  .tpl-body strong{ display:block; font-size:14.5px; margin-bottom:2px; color:var(--text); }
-  .tpl-body .desc{ font-size:11.5px; color:var(--slate); margin-bottom:10px; }
-  .price-tag{ display:inline-block; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; padding:4px 12px; border-radius:999px; color:#0A0E1A; }
- 
-  .tier-199{ background:var(--tier1); } .tpv-199{ background:linear-gradient(135deg,#0EA5E9,#22D3EE); }
-  .tier-299{ background:var(--tier2); } .tpv-299{ background:linear-gradient(135deg,#16A34A,#34D399); }
-  .tier-399{ background:var(--tier3); } .tpv-399{ background:linear-gradient(135deg,#DB2777,#FF4FA3); }
-  .tier-499{ background:var(--tier4); } .tpv-499{ background:linear-gradient(135deg,#7C3AED,#A855F7); }
-  .tier-249{ background:var(--tier5); } .tpv-249{ background:linear-gradient(135deg,#F59E0B,#FBBF24); }
-  .tier-label{ position:absolute; top:8px; right:8px; font-size:10px; font-weight:700; color:white; background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:999px; }
- 
+  .tpl-body strong{ display:block; font-size:14px; margin-bottom:2px; font-family:'Outfit',sans-serif; font-weight:500; }
+  .tpl-body .desc{ font-size:11px; color:var(--slate); margin-bottom:10px; font-weight:300; }
+  .price-tag{ display:inline-block; font-family:'Outfit',sans-serif; font-weight:600; font-size:13px; padding:4px 12px; border-radius:999px; background:var(--neon); color:#000; }
+  .tier-label{ position:absolute; top:8px; right:8px; font-size:10px; font-weight:600; color:#000; background:var(--neon); padding:3px 9px; border-radius:999px; }
+
   /* ---- CUSTOM REQUEST ---- */
   .custom-section{
-    max-width:700px; margin:50px auto; padding:28px 26px;
-    background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(255,79,163,0.12));
-    border:1.5px dashed var(--stamp2); border-radius:20px; text-align:center;
+    max-width:700px; margin:60px auto; padding:32px 28px;
+    background:var(--card); border:1px dashed var(--neon-soft); border-radius:18px; text-align:center;
   }
-  .custom-section h3{ font-size:20px; margin-bottom:8px; }
-  .custom-section p{ color:var(--slate); font-size:13.5px; margin-bottom:16px; line-height:1.6; }
+  .custom-section h3{ font-size:22px; margin-bottom:10px; }
+  .custom-section p{ color:var(--slate); font-size:13px; margin-bottom:18px; line-height:1.65; font-weight:300; }
   .custom-section textarea{
-    width:100%; min-height:80px; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
-    background:var(--card2); color:var(--text); font-family:'Inter',sans-serif; font-size:14px; margin-bottom:14px; resize:vertical;
+    width:100%; min-height:80px; padding:12px 14px; border-radius:10px; border:1px solid var(--line);
+    background:#000; color:var(--text); font-family:'Outfit',sans-serif; font-size:14px; margin-bottom:16px; resize:vertical;
   }
-  .custom-note{ font-size:11.5px; color:#C4B5FD; margin-top:10px; }
- 
+  .custom-note{ font-size:11px; color:var(--slate); margin-top:12px; font-weight:300; }
+
   /* ---- ORDER FORM ---- */
-  .order-section{ max-width:640px; margin:50px auto; padding:0 20px 80px; }
-  .step-box{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px; margin-bottom:18px; }
-  .step-box h2{ font-size:16px; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .order-section{ max-width:640px; margin:60px auto; padding:0 20px 60px; }
+  .step-box{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; margin-bottom:18px; }
+  .step-box h2{ font-size:17px; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
   .step-box h2 .num{
-    width:24px; height:24px; border-radius:50%; background:var(--stamp); color:white;
-    display:inline-flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;
+    width:24px; height:24px; border-radius:50%; background:var(--neon); color:#000;
+    display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;
+    font-family:'Outfit',sans-serif;
   }
-  label{ display:block; font-size:12.5px; color:var(--slate); margin:14px 0 6px; }
+  label{ display:block; font-size:12px; color:var(--slate); margin:14px 0 6px; font-weight:300; }
   label:first-of-type{ margin-top:0; }
   input[type=text], textarea{
-    width:100%; padding:11px 14px; border-radius:10px; border:1.5px solid var(--line);
-    background:var(--card2); color:var(--text); font-family:'Inter',sans-serif; font-size:14px;
+    width:100%; padding:11px 14px; border-radius:10px; border:1px solid var(--line);
+    background:#000; color:var(--text); font-family:'Outfit',sans-serif; font-size:14px;
   }
   .selected-summary{
-    display:flex; align-items:center; gap:10px; background:var(--card2); border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin-bottom:16px;
-    font-size:13.5px;
+    display:flex; align-items:center; gap:10px; background:#000; border:1px solid var(--line); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:13.5px;
   }
-  .selected-summary .amount{ margin-left:auto; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--stamp); font-size:18px; }
- 
+  .selected-summary .amount{ margin-left:auto; font-family:'Outfit',sans-serif; font-weight:600; color:var(--neon); font-size:17px; }
+
   .stepper{ display:flex; align-items:center; margin-bottom:20px; }
   .stepper .sp{
-    width:32px; height:32px; border-radius:50%; background:var(--line); color:var(--slate);
-    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;
-    flex-shrink:0; transition:all .3s ease;
+    width:30px; height:30px; border-radius:50%; background:var(--line); color:var(--slate);
+    display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:600;
+    flex-shrink:0; transition:all 0.3s ease; font-family:'Outfit',sans-serif;
   }
-  .stepper .sp.active{ background:var(--stamp); color:white; }
-  .stepper .sp.done{ background:var(--good); color:#0A2A1E; }
-  .stepper .sline{ flex:1; height:3px; background:var(--line); margin:0 6px; border-radius:2px; overflow:hidden; }
-  .stepper .sline .fill{ height:100%; width:0%; background:var(--good); transition:width .4s ease; }
-  .stepper-labels{ display:flex; justify-content:space-between; font-size:11px; color:var(--slate); margin-bottom:18px; }
- 
+  .stepper .sp.active{ background:var(--neon); color:#000; }
+  .stepper .sp.done{ background:#22C55E; color:#000; }
+  .stepper .sline{ flex:1; height:2px; background:var(--line); margin:0 6px; border-radius:2px; overflow:hidden; }
+  .stepper .sline .fill{ height:100%; width:0%; background:var(--neon); transition:width 0.4s ease; }
+  .stepper-labels{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--slate); margin-bottom:20px; font-weight:300; }
+
   .cta-btn{
-    display:block; width:100%; margin-top:8px; padding:15px 0; border:none; border-radius:12px; cursor:pointer;
-    background:linear-gradient(135deg,var(--stamp),var(--stamp2)); color:white;
-    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px;
-    text-align:center; text-decoration:none; box-sizing:border-box;
+    display:block; width:100%; margin-top:8px; padding:15px 0; border:none; border-radius:12px; cursor:none;
+    background:var(--neon); color:#000; font-family:'Outfit',sans-serif; font-weight:600; font-size:15px;
+    text-align:center; text-decoration:none; box-sizing:border-box; transition:all 0.2s ease;
   }
-  .cta-btn.disabled{ opacity:0.4; pointer-events:none; }
- 
+  .cta-btn:hover{ box-shadow:0 6px 24px rgba(57,255,20,0.3); }
+  .cta-btn.disabled{ opacity:0.3; pointer-events:none; }
+
   .instructions{
     display:none; margin-top:16px; padding:16px; border-radius:12px;
-    background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.35); font-size:13.5px; color:#6EE7B7; line-height:1.6;
+    background:rgba(57,255,20,0.06); border:1px solid rgba(57,255,20,0.25); font-size:13px; color:#B8FFA0; line-height:1.6; font-weight:300;
   }
   .instructions.show{ display:block; }
- 
-  footer{ text-align:center; padding:24px; color:var(--slate); font-size:12px; border-top:1px solid var(--line); position:relative; z-index:1; }
+
+  /* ---- GIANT WORDMARK ---- */
+  .wordmark-section{ padding:40px 20px 20px; text-align:center; overflow:hidden; }
+  .wordmark-text{
+    font-family:'Outfit',sans-serif; font-weight:600; font-size:11vw; letter-spacing:-0.03em;
+    line-height:0.85; color:#fff; opacity:0.95; white-space:nowrap;
+  }
+  .wordmark-text .letter-wrapper{ display:inline-block; overflow:hidden; vertical-align:bottom; line-height:0.85; }
+  .wordmark-text .letter-inner{ display:inline-block; opacity:0; transform:translateX(-105%); filter:blur(20px); animation:letter-reveal 1.2s cubic-bezier(0.05,0.9,0.1,1) forwards; }
+  @keyframes letter-reveal{ 0%{ opacity:0; transform:translateX(-105%); filter:blur(20px); } 25%{ opacity:1; } 100%{ opacity:0.95; transform:translateX(0); filter:blur(0); } }
+
+  footer{ text-align:center; padding:24px; color:var(--slate); font-size:11.5px; border-top:1px solid var(--line); position:relative; z-index:1; font-weight:300; }
+
+  /* ---- CUSTOM CURSOR ---- */
+  @media (hover:hover){
+    .cursor-ring{
+      position:fixed; top:0; left:0; width:40px; height:40px; border:1.5px solid rgba(255,255,255,0.45);
+      border-radius:50%; z-index:99998; pointer-events:none; transform:translate(-50%,-50%) scale(0); opacity:0;
+      transition:opacity 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease;
+    }
+    .cursor-ring.active{ opacity:1; }
+    .cursor-ring.expanded{ border-color:var(--neon); }
+    .cursor-pill{
+      position:fixed; top:0; left:0; z-index:99999; pointer-events:none;
+      padding:0.7rem 1.4rem; background:rgba(255,255,255,0.06); backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.18); border-radius:999px;
+      transform:translate(-50%,-50%) scale(0); opacity:0;
+      transition:opacity 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cursor-pill.active{ opacity:1; }
+    .cursor-pill span{ font-family:'Outfit',sans-serif; font-size:0.8rem; font-weight:500; letter-spacing:0.05em; color:var(--neon); text-transform:uppercase; white-space:nowrap; }
+    .cursor-pill span .w{ color:#fff; }
+  }
 </style>
 </head>
 <body>
- 
-<div class="orb-field"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
-<div class="grid-overlay"></div>
- 
+
+<div class="video-container">
+  <video id="bg-video" autoplay muted loop playsinline poster="purple-desert-poster.jpg">
+    <source src="purple-desert.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="video-overlay"></div>
+<div class="bg-wash"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-pill" id="cursorPill"><span><span class="w">Send</span> This ✨</span></div>
+
 <main>
- 
+
   <div class="hero">
-    <div class="badge"><span class="dot"></span> 300+ pages created</div>
-    <h1>Say it in a way texts never could</h1>
-    <p>Personalized, animated pages made for your person — pick a vibe, add your story, get a link to share. Delivered in minutes, not days.</p>
+    <div class="badge"><span class="blinking-dot"></span> 300+ pages created</div>
+    <h1 class="hero-title">Say it in a way <br> texts never could</h1>
+    <p>Personalized, animated pages made for your person — pick a vibe, add your story, get a link to share.</p>
     <div class="hero-ctas">
-      <a href="#catalog" class="btn-primary">Browse Templates →</a>
-      <a href="#custom" class="btn-ghost">I want something custom</a>
+      <a href="#catalog" class="btn-primary hoverable">Browse Templates →</a>
+      <a href="#custom" class="btn-ghost hoverable">I want something custom</a>
     </div>
     <div class="trust-row">
       <div class="trust-item">🔒 Secure payment via Razorpay</div>
@@ -205,7 +236,7 @@
       <div class="trust-item">💬 Real human on WhatsApp</div>
     </div>
   </div>
- 
+
   <div class="how">
     <h2>How it works</h2>
     <div class="how-grid">
@@ -215,41 +246,41 @@
       <div class="how-step"><div class="circle">🔗</div><strong>Get your link</strong><span>in 10–15 minutes</span></div>
     </div>
   </div>
- 
+
   <div class="catalog" id="catalog">
     <h2>Choose a template</h2>
     <p class="sub">Prices vary by animation complexity — ₹199 to ₹499</p>
     <div class="cat-tabs">
-      <button class="cat-tab active" data-cat="her">For Her 💗</button>
-      <button class="cat-tab" data-cat="him">For Him 💙</button>
-      <button class="cat-tab" data-cat="any">Works for Both 💫</button>
+      <button class="cat-tab active hoverable" data-cat="her">For Her</button>
+      <button class="cat-tab hoverable" data-cat="him">For Him</button>
+      <button class="cat-tab hoverable" data-cat="any">Works for Both</button>
     </div>
     <div class="tpl-grid" id="tplGrid"></div>
   </div>
- 
+
   <div class="custom-section" id="custom">
-    <h3>🌟 Want something fully custom?</h3>
+    <h3>Want something fully custom?</h3>
     <p>Tell us your story — how you met, an inside joke, whatever you want them to feel — and we'll hand-build a page around it. This isn't an auto-generator, it's made by an actual person, so it takes a little longer.</p>
     <textarea id="customStory" placeholder="e.g. We met at a coffee shop during finals week and I spilled coffee on her notes..."></textarea>
-    <a class="cta-btn" id="customBtn" href="#" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#A855F7,#7C3AED);">Request Custom Page — ₹599</a>
+    <a class="cta-btn hoverable" id="customBtn" href="#" target="_blank" rel="noopener">Request Custom Page — ₹599</a>
     <p class="custom-note">Custom orders are delivered within 24 hours, not 15 minutes.</p>
   </div>
- 
+
   <div class="order-section">
     <div class="step-box">
       <h2><span class="num">1</span> Your selected template</h2>
       <div class="selected-summary" id="selectedSummary">
-        <span id="selectedLabel">No template selected yet — pick one above 👆</span>
+        <span id="selectedLabel">No template selected yet — pick one above</span>
         <span class="amount" id="selectedAmount"></span>
       </div>
       <label>Their name</label>
       <input type="text" id="fName" placeholder="e.g. Riya">
-      <label id="dateLabel" style="display:none;">Their birthday (optional, for birthday templates)</label>
-      <input type="text" id="fDate" placeholder="e.g. 25 August" style="display:none;" id="fDateInput">
+      <label id="dateLabel" style="display:none;">Their birthday (optional)</label>
+      <input type="text" id="fDate" placeholder="e.g. 25 August" style="display:none;">
       <label>Your message to them</label>
       <textarea id="fMessage" placeholder="Write what you want their page to say..." style="min-height:70px; resize:vertical;"></textarea>
     </div>
- 
+
     <div class="step-box">
       <h2><span class="num">2</span> Complete your order</h2>
       <div class="stepper">
@@ -258,23 +289,26 @@
         <div class="sp" id="spB">2</div>
       </div>
       <div class="stepper-labels"><span>Send order</span><span>Pay & confirm</span></div>
- 
-      <a class="cta-btn disabled" id="waBtn" href="#" target="_blank" rel="noopener">Step 1 — Send Order on WhatsApp</a>
-      <a class="cta-btn" id="payBtn" href="#" target="_blank" rel="noopener" style="display:none; margin-top:10px; background:linear-gradient(135deg,#34D399,#16A34A);">Step 2 — Pay Now</a>
- 
+
+      <a class="cta-btn disabled hoverable" id="waBtn" href="#" target="_blank" rel="noopener">Step 1 — Send Order on WhatsApp</a>
+      <a class="cta-btn hoverable" id="payBtn" href="#" target="_blank" rel="noopener" style="display:none; margin-top:10px;">Step 2 — Pay Now</a>
+
       <div class="instructions" id="instructions">
-        <strong>Almost done:</strong> we opened WhatsApp with your order — hit send there, then come back and tap "Pay Now." Once confirmed, your link arrives on WhatsApp within 10–15 minutes. 💌
+        <strong>Almost done:</strong> we opened WhatsApp with your order — hit send there, then come back and tap "Pay Now." Your link arrives on WhatsApp within 10–15 minutes.
       </div>
     </div>
   </div>
- 
+
+  <div class="wordmark-section">
+    <h2 class="wordmark-text" id="wordmark">SEND THIS</h2>
+  </div>
+
 </main>
- 
-<footer>Send This To Bae · made with 🩷 by Hemant · secure payments via Razorpay</footer>
- 
+
+<footer>Send This To Bae · made with care by Hemant · secure payments via Razorpay</footer>
+
 <script>
   const OWNER_WHATSAPP = "919422056273";
- 
   const PAYMENT_LINKS = {
     199: "https://rzp.io/rzp/REPLACE_WITH_199_LINK",
     249: "https://rzp.io/rzp/REPLACE_WITH_249_LINK",
@@ -283,28 +317,27 @@
     499: "https://rzp.io/rzp/REPLACE_WITH_499_LINK",
     599: "https://rzp.io/rzp/REPLACE_WITH_599_LINK"
   };
- 
   const TEMPLATES = [
-    { key:'scratch',  label:'Scratch & Reveal', emoji:'🎁', desc:'Scratch-off message',   gender:'her', price:199, tier:'tier-199', preview:'tpv-199' },
-    { key:'jar',      label:'Reasons Jar',       emoji:'🫙', desc:'Pull-a-reason cards',   gender:'her', price:199, tier:'tier-199', preview:'tpv-199' },
-    { key:'retro',    label:'Retro Message',     emoji:'💾', desc:'Windows 98 nostalgia',  gender:'him', price:199, tier:'tier-199', preview:'tpv-199' },
-    { key:'cat',      label:'Cute Cat',          emoji:'🐱', desc:'Tap-to-reveal',         gender:'her', price:299, tier:'tier-299', preview:'tpv-299' },
-    { key:'panda',    label:'Panda Bamboo',      emoji:'🐼', desc:'Grow bamboo, reveal',   gender:'her', price:299, tier:'tier-299', preview:'tpv-299' },
-    { key:'flower',   label:'Flower Garden',     emoji:'🌸', desc:'Tap flowers to bloom',  gender:'her', price:299, tier:'tier-299', preview:'tpv-299' },
-    { key:'sorry',    label:'Sorry Page',        emoji:'🥺', desc:'Rain to sunshine',      gender:'any', price:299, tier:'tier-299', preview:'tpv-299' },
-    { key:'timeline', label:'Our Story',         emoji:'📸', desc:'Relationship timeline', gender:'any', price:299, tier:'tier-299', preview:'tpv-299' },
-    { key:'teddy',    label:'Teddy Hug',         emoji:'🧸', desc:'Tap for a big hug',     gender:'any', price:299, tier:'tier-299', preview:'tpv-299' },
-    { key:'birthday', label:'Birthday Page',     emoji:'🎂', desc:'Candles + confetti',    gender:'any', price:249, tier:'tier-249', preview:'tpv-249' },
-    { key:'distance', label:'Distance Countdown',emoji:'✈️', desc:'Days until we meet',    gender:'any', price:249, tier:'tier-249', preview:'tpv-249' },
-    { key:'zodiac',   label:'Zodiac Match',      emoji:'✨', desc:'Compatibility reveal',  gender:'any', price:249, tier:'tier-249', preview:'tpv-249' },
-    { key:'playful',  label:'Playful Quiz',      emoji:'🥹', desc:'Multi-question tease',  gender:'her', price:399, tier:'tier-399', preview:'tpv-399' },
-    { key:'levelup',  label:'Level Up',          emoji:'🎮', desc:'Gamer XP bar unlock',   gender:'him', price:399, tier:'tier-399', preview:'tpv-399' },
-    { key:'proposeq', label:'Propose Quiz',      emoji:'💭', desc:'Playful proposal quiz', gender:'any', price:399, tier:'tier-399', preview:'tpv-399' },
-    { key:'propose',  label:'Propose',           emoji:'💍', desc:'Runaway No button',     gender:'any', price:399, tier:'tier-399', preview:'tpv-399' },
-    { key:'trophy',   label:'Mission Unlock',    emoji:'🏆', desc:'Achievement reveal',    gender:'him', price:499, tier:'tier-499', preview:'tpv-499' },
-    { key:'rocket',   label:'Rocket Launch',     emoji:'🚀', desc:'Countdown to message',  gender:'him', price:499, tier:'tier-499', preview:'tpv-499' },
+    { key:'scratch',  label:'Scratch & Reveal', emoji:'🎁', desc:'Scratch-off message',   gender:'her', price:199 },
+    { key:'jar',      label:'Reasons Jar',       emoji:'🫙', desc:'Pull-a-reason cards',   gender:'her', price:199 },
+    { key:'retro',    label:'Retro Message',     emoji:'💾', desc:'Windows 98 nostalgia',  gender:'him', price:199 },
+    { key:'cat',      label:'Cute Cat',          emoji:'🐱', desc:'Tap-to-reveal',         gender:'her', price:299 },
+    { key:'panda',    label:'Panda Bamboo',      emoji:'🐼', desc:'Grow bamboo, reveal',   gender:'her', price:299 },
+    { key:'flower',   label:'Flower Garden',     emoji:'🌸', desc:'Tap flowers to bloom',  gender:'her', price:299 },
+    { key:'sorry',    label:'Sorry Page',        emoji:'🥺', desc:'Rain to sunshine',      gender:'any', price:299 },
+    { key:'timeline', label:'Our Story',         emoji:'📸', desc:'Relationship timeline', gender:'any', price:299 },
+    { key:'teddy',    label:'Teddy Hug',         emoji:'🧸', desc:'Tap for a big hug',     gender:'any', price:299 },
+    { key:'birthday', label:'Birthday Page',     emoji:'🎂', desc:'Candles + confetti',    gender:'any', price:249 },
+    { key:'distance', label:'Distance Countdown',emoji:'✈️', desc:'Days until we meet',    gender:'any', price:249 },
+    { key:'zodiac',   label:'Zodiac Match',      emoji:'✨', desc:'Compatibility reveal',  gender:'any', price:249 },
+    { key:'playful',  label:'Playful Quiz',      emoji:'🥹', desc:'Multi-question tease',  gender:'her', price:399 },
+    { key:'levelup',  label:'Level Up',          emoji:'🎮', desc:'Gamer XP bar unlock',   gender:'him', price:399 },
+    { key:'proposeq', label:'Propose Quiz',      emoji:'💭', desc:'Playful proposal quiz', gender:'any', price:399 },
+    { key:'propose',  label:'Propose',           emoji:'💍', desc:'Runaway No button',     gender:'any', price:399 },
+    { key:'trophy',   label:'Mission Unlock',    emoji:'🏆', desc:'Achievement reveal',    gender:'him', price:499 },
+    { key:'rocket',   label:'Rocket Launch',     emoji:'🚀', desc:'Countdown to message',  gender:'him', price:499 },
   ];
- 
+
   let activeCat = 'her';
   document.querySelectorAll('.cat-tab').forEach(tab=>{
     tab.addEventListener('click', ()=>{
@@ -316,7 +349,7 @@
       renderTemplates();
     });
   });
- 
+
   const tplGrid = document.getElementById('tplGrid');
   let selectedTpl = null;
   function renderTemplates(){
@@ -324,14 +357,10 @@
     const filtered = TEMPLATES.filter(t => activeCat === 'any' ? t.gender === 'any' : (t.gender === activeCat || t.gender === 'any'));
     filtered.forEach(t=>{
       const card = document.createElement('div');
-      card.className = 'tpl-card';
+      card.className = 'tpl-card hoverable';
       card.innerHTML = `
-        <div class="tpl-preview ${t.preview}"><span class="tier-label">₹${t.price}</span>${t.emoji}</div>
-        <div class="tpl-body">
-          <strong>${t.label}</strong>
-          <div class="desc">${t.desc}</div>
-          <span class="price-tag ${t.tier}">₹${t.price}</span>
-        </div>`;
+        <div class="tpl-preview"><span class="tier-label">₹${t.price}</span>${t.emoji}</div>
+        <div class="tpl-body"><strong>${t.label}</strong><div class="desc">${t.desc}</div><span class="price-tag">₹${t.price}</span></div>`;
       card.addEventListener('click', ()=>{
         document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('selected'));
         card.classList.add('selected');
@@ -343,8 +372,9 @@
       });
       tplGrid.appendChild(card);
     });
+    attachHoverListeners();
   }
- 
+
   const fName = document.getElementById('fName');
   const fMessage = document.getElementById('fMessage');
   const fDate = document.getElementById('fDate');
@@ -352,18 +382,17 @@
   const payBtn = document.getElementById('payBtn');
   const selectedLabel = document.getElementById('selectedLabel');
   const selectedAmount = document.getElementById('selectedAmount');
- 
+
   function updateSummary(){
     if(selectedTpl){
       selectedLabel.textContent = `${selectedTpl.emoji} ${selectedTpl.label}`;
       selectedAmount.textContent = `₹${selectedTpl.price}`;
     } else {
-      selectedLabel.textContent = 'No template selected yet — pick one above 👆';
+      selectedLabel.textContent = 'No template selected yet — pick one above';
       selectedAmount.textContent = '';
     }
     updateWaLink();
   }
- 
   function updateWaLink(){
     const name = fName.value.trim();
     const ready = selectedTpl && name;
@@ -371,9 +400,7 @@
     waBtn.classList.remove('disabled');
     const message = fMessage.value.trim();
     const dateInfo = selectedTpl.key === 'birthday' && fDate.value.trim() ? `\nBirthday: ${fDate.value.trim()}` : '';
-    const orderText = encodeURIComponent(
-      `New order 💌\nTemplate: ${selectedTpl.label}\nPrice: ₹${selectedTpl.price}\nName: ${name}${dateInfo}\nMessage: ${message || '(none provided)'}\n\nPayment: I'll complete this now`
-    );
+    const orderText = encodeURIComponent(`New order\nTemplate: ${selectedTpl.label}\nPrice: ₹${selectedTpl.price}\nName: ${name}${dateInfo}\nMessage: ${message || '(none provided)'}\n\nPayment: I'll complete this now`);
     waBtn.href = `https://wa.me/${OWNER_WHATSAPP}?text=${orderText}`;
     payBtn.href = PAYMENT_LINKS[selectedTpl.price] || PAYMENT_LINKS[399];
   }
@@ -382,7 +409,7 @@
   fDate.addEventListener('input', updateWaLink);
   renderTemplates();
   updateSummary();
- 
+
   waBtn.addEventListener('click', ()=>{
     document.getElementById('instructions').classList.add('show');
     waBtn.style.display = 'none';
@@ -395,24 +422,96 @@
     payBtn.textContent = 'Payment page opened ✓';
     document.getElementById('spB').classList.add('done'); document.getElementById('spB').textContent = '✓';
   });
- 
+
   const customBtn = document.getElementById('customBtn');
   const customStory = document.getElementById('customStory');
   function updateCustomLink(){
     const story = customStory.value.trim();
-    const text = encodeURIComponent(`Custom page request 🌟\n\nStory: ${story || '(will describe on WhatsApp)'}\n\nPrice: ₹599 (24hr delivery)`);
+    const text = encodeURIComponent(`Custom page request\n\nStory: ${story || '(will describe on WhatsApp)'}\n\nPrice: ₹599 (24hr delivery)`);
     customBtn.href = `https://wa.me/${OWNER_WHATSAPP}?text=${text}`;
   }
   customStory.addEventListener('input', updateCustomLink);
   updateCustomLink();
+
+  // ---- Text reveal animations ----
+  document.addEventListener('DOMContentLoaded', () => {
+    const wordmark = document.getElementById('wordmark');
+    if(wordmark){
+      const text = wordmark.textContent.trim();
+      wordmark.innerHTML = '';
+      [...text].forEach((char, i)=>{
+        const wrapper = document.createElement('span');
+        wrapper.className = 'letter-wrapper';
+        const inner = document.createElement('span');
+        inner.textContent = char === ' ' ? '\u00A0' : char;
+        inner.className = 'letter-inner';
+        inner.style.animationDelay = `${i * 0.06}s`;
+        wrapper.appendChild(inner);
+        wordmark.appendChild(wrapper);
+      });
+    }
+
+    const heroTitle = document.querySelector('.hero-title');
+    if(heroTitle){
+      const html = heroTitle.innerHTML;
+      const parts = html.split(/(\s+|<br\s*\/?>)/i);
+      heroTitle.innerHTML = '';
+      let wordIndex = 0;
+      parts.forEach(part=>{
+        if(part.trim() === ''){
+          heroTitle.appendChild(document.createTextNode(' '));
+        } else if(part.toLowerCase().startsWith('<br')){
+          heroTitle.appendChild(document.createElement('br'));
+        } else {
+          const wrapper = document.createElement('span');
+          wrapper.className = 'word-wrapper';
+          const inner = document.createElement('span');
+          inner.className = 'word-inner';
+          inner.textContent = part;
+          inner.style.animationDelay = `${wordIndex * 0.1}s`;
+          wordIndex++;
+          wrapper.appendChild(inner);
+          heroTitle.appendChild(wrapper);
+        }
+      });
+    }
+  });
+
+  // ---- Custom cursor (desktop only) ----
+  if(window.matchMedia('(hover: hover)').matches){
+    const ring = document.getElementById('cursorRing');
+    const pill = document.getElementById('cursorPill');
+    let mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my, first = true, scale = 0, target = 0, hovering = false;
+
+    document.addEventListener('mousemove', e=>{
+      mx = e.clientX; my = e.clientY;
+      if(first){ cx = mx; cy = my; first = false; ring.classList.add('active'); pill.classList.add('active'); }
+      if(!hovering) target = 1;
+    });
+    document.addEventListener('mouseleave', ()=> target = 0);
+    document.addEventListener('mouseenter', ()=>{ if(!hovering) target = 1; });
+
+    function attachHoverListeners(){
+      document.querySelectorAll('.hoverable').forEach(el=>{
+        el.onmouseenter = ()=>{ hovering = true; target = 0; ring.classList.add('expanded'); };
+        el.onmouseleave = ()=>{ hovering = false; target = 1; ring.classList.remove('expanded'); };
+      });
+    }
+    window.attachHoverListeners = attachHoverListeners;
+    attachHoverListeners();
+
+    function loop(){
+      cx += (mx - cx) * 0.08; cy += (my - cy) * 0.08;
+      scale += (target - scale) * 0.15;
+      pill.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%,-50%) scale(${scale})`;
+      ring.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%,-50%) scale(${ring.classList.contains('expanded') ? 1.5*scale : scale})`;
+      requestAnimationFrame(loop);
+    }
+    loop();
+  } else {
+    window.attachHoverListeners = ()=>{};
+  }
 </script>
- 
+
 </body>
 </html>
- 
-
-
-
-
-
-
